@@ -1,0 +1,15 @@
+<h2>Se connecter</h2>
+<form [formGroup]="signInForm" (ngSubmit)="onSignIn()">
+  <div class="form-group">
+    <label for="email">Email :</label>
+    <input class="form-control" type="text" id="email" formControlName="email">
+  </div>
+  <div class="form-group">
+    <label for="email">Mot de passe :</label>
+    <input class="form-control" type="password" id="password" formControlName="password">
+  </div>
+  <button type="submit" [disabled]="signInForm.invalid">Se connecter</button>
+  <p class="error-msg">{{ Errormsg }}</p>
+</form>
+<p>Pas de compte ? <a routerLink="/auth/signup">Créer un compte maintenant</a></p>
+<button (click)="onSignInWithGoogle()" style="margin-top: 50px;">Se connecter avec Google</button>

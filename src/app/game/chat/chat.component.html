@@ -1,0 +1,15 @@
+<div>
+  <h4>Chat</h4>
+  <div class="class-container">
+    <ul>
+      <li *ngFor="let chat of chats">
+        <h4>{{chat.name}}</h4>
+        <p>{{chat.content}}</p>
+      </li>
+    </ul>
+    <form [formGroup]="submitChat" (submit)="onSubmitChat()" autocomplete="off">
+      <input type="text" id="chat" formControlName="content">
+      <button type="submit" [disabled]="submitChat.invalid">Envoyer</button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+<div>
+  <a routerLink="/">Quitter la salle</a>
+  <h3>Salle : {{roomName}}</h3>
+  <div>
+    <app-card cardName="card_back_alt" (click)="onPickCard()"></app-card>
+    <app-card [cardName]="currentCard"></app-card>
+  </div>
+  <div class="deck-container" style="display: flex; flex-direction: row;">
+    <app-card *ngFor="let card of cards; let i = index" [cardName]="card" [cardIndex]="i" (click)="onPutCard(i, card)"></app-card>
+  </div>
+  <div *ngIf="isSelectingColor">
+    <h4>Choisir la couleur</h4><span (click)="isSelectingColor=false">*close*</span>
+    <div>
+      <button (click)="selectColor('blue')">Bleu</button>
+      <button (click)="selectColor('yellow')">Jaune</button>
+      <button (click)="selectColor('green')">Vert</button>
+      <button (click)="selectColor('red')">Rouge</button>
+    </div>
+  </div>
+</div>
+<app-chat></app-chat>

@@ -5,7 +5,23 @@
   "projects": {
     "uno": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "skipTests": true
+        },
+        "@schematics/angular:class": {
+          "skipTests": true
+        },
+        "@schematics/angular:directive": {
+          "skipTests": true
+        },
+        "@schematics/angular:pipe": {
+          "skipTests": true
+        },
+        "@schematics/angular:service": {
+          "skipTests": true
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -119,6 +135,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "uno"
+    }
+  },
+  "defaultProject": "uno",
+  "cli": {
+    "analytics": "a2d564b8-16d6-4c87-b9a6-ec33d864ce45"
+  }
 }
