@@ -44,7 +44,7 @@ export class GameService {
   pickCard(roomRef: firebase.database.Reference){
     return new Promise(
       (resolve, reject)=>{
-        roomRef.child("cards").once("value",
+        roomRef.child("game/cards").once("value",
         (dataSnapshot)=>{
           const cards = Object.entries(dataSnapshot.val());
           const x = Math.floor(Math.random()*107);
@@ -54,8 +54,97 @@ export class GameService {
           }else{
             reject(false);
           }
+        },
+        (error)=>{
+          reject(error);
         });
       }
     );
+  }
+
+  //card reverse action
+  reverseCard(gameRef: firebase.database.Reference){
+    return new Promise(
+      (resolve, reject)=>{
+        gameRef.child("turn").once("value",
+        (dataSnapshot)=>{
+          const newTurn = dataSnapshot.val()*-1;
+          gameRef.child("turn").set(newTurn);
+          resolve();
+        },
+        (error)=>{
+          reject(error);
+        });
+      }
+    );
+  }
+  //skip action
+  skipCard(gameRef: firebase.database.Reference){
+    return new Promise(
+      (resolve, reject)=>{
+        gameRef.child("action_card").set("skip_turn").then(
+          ()=>{
+            resolve();
+          },
+          (error)=>{
+            reject(error);
+          }
+        );
+      }
+    );
+  }
+  //picker action
+  pick2Card(gameRef: firebase.database.Reference){
+    return new Promise(
+      (resolve, reject)=>{
+        gameRef.child("action_card").once("value",
+        (dataSnapshot)=>{
+          let oldValue:number = 0;
+          if(dataSnapshot.val()){
+            oldValue = dataSnapshot.val().split("_")[1];
+          }
+          let pickCard = oldValue+2;
+          gameRef.child("action_card").set("pick_"+pickCard.toString()).then(
+            ()=>{
+              resolve(true);
+            },
+            (error)=>{
+              reject(error);
+            }
+          );
+        },
+        (error)=>{
+          reject(error);
+        });
+      }
+    );
+  }
+  pick4Card(gameRef: firebase.database.Reference, color: string){
+    return new Promise(
+      (resolve, reject)=>{
+        gameRef.child("action_card").once("value",
+        (dataSnapshot)=>{
+          const oldValue = dataSnapshot.val() ? dataSnapshot.val() : 0;
+          gameRef.child("action_card").set("pick_"+(oldValue+4).toString()).then(
+            ()=>{
+              this.changeColor(gameRef, color).then(()=>{ resolve(true); });
+            },
+            (error)=>{
+              reject(error);
+            }
+          );
+        },
+        (error)=>{
+          reject(error);
+        });
+      }
+    );
+  }
+  changeColor(gameRef: firebase.database.Reference, color: string){
+    return new Promise(
+      (resolve)=>{
+        gameRef.child("forced_color").set(color).then(()=>{ resolve(true); });
+      }
+    )
   }
 }

@@ -21,13 +21,6 @@ export class RoomService implements OnDestroy{
   playersSubject = new Subject<Array<string>>();
   playerRef: firebase.database.Reference;
 
-  currentCard: string;
-  currentCardSubject = new Subject<string>();
-
-  currentPlayer: string;
-  currentPlayerSubject = new Subject<string>();
-  currentUser: firebase.User;
-
   isAdmin: boolean = false;
 
   constructor(private gameService: GameService) {
@@ -48,7 +41,7 @@ export class RoomService implements OnDestroy{
                 //initialize game
                 const cards = this.gameService.createNewDeck();
                 for(const card of cards){
-                  this.roomRef.child("cards").push(card);
+                  this.roomRef.child("game/cards").push(card);
                 }
                 this.pickStartCard().then(
                   (card: string)=>{
@@ -69,18 +62,23 @@ export class RoomService implements OnDestroy{
   }
 
   connect(roomId: string){
-    return new Promise<string>(
+    return new Promise<firebase.database.Reference>(
       (resolve, reject)=>{
         //firebase ref to database
         this.roomRef = firebase.database().ref("private_room").child(roomId);
+        this.chats = [];
+        this.chatSubject.next(this.chats);
+
         this.roomRef.child("creator").once("value",
-        (dataSnapshot)=>{
-          if(dataSnapshot.val()){
+        (creator_snapshot)=>{
+          //check if room is initialized
+          if(creator_snapshot.val()){
+            //update chats
             this.roomRef.child("chats").on("child_added",
             (datasnapshot)=>{
               this.chats.push(datasnapshot.val());
               this.chatSubject.next(this.chats);
-                });
+            });
             //firebase push new user connection
             this.roomRef.child("game/players").push({name: firebase.auth().currentUser.displayName, cards: 0}).then(
               (ref)=>{
@@ -105,29 +103,16 @@ export class RoomService implements OnDestroy{
                     this.chatSubject.next(this.chats);
                   }
                 });
-                //update currentCard
-                this.roomRef.child("game/current_card").on("value",
-                (dataSnapshot)=>{
-                  this.currentCard = dataSnapshot.val();
-                  this.currentCardSubject.next(this.currentCard);
 
-                  //upadte current player
-                  this.roomRef.child("game/current_player").on("value",
-                  (dataSnapshot)=>{
-                    this.currentPlayer = dataSnapshot.val();
-                    this.currentCardSubject.next(this.currentPlayer);
-                  });
-                  //check if turn not assigned
-                  this.roomRef.child("game/current_player").once("value",
+                //check if turn not assigned
+                this.roomRef.child("game/current_player").once("value",
                   (dataSnapshot)=>{
                     if(!dataSnapshot.val()){
+                      console.log("set turn");
                       this.roomRef.child("game/current_player").set(firebase.auth().currentUser.displayName);
                     }
-                  });
-                  //get name and resolve connection
-                  this.roomRef.child("name").once('value', (dataSnapshot)=>{ resolve(dataSnapshot.val()); });
                 });
-
+                resolve(this.roomRef.child("game"));
               }
             );
           }else{
@@ -137,11 +122,11 @@ export class RoomService implements OnDestroy{
       }
     );
   }
-
+  //submit Chat change event / update chat in component
   refreshChat(){
     this.chatSubject.next(this.chats);
   }
-
+  //submit a new chat to room
   newChat(content: string){
     const chat = {
       name: firebase.auth().currentUser.displayName,
@@ -149,23 +134,27 @@ export class RoomService implements OnDestroy{
     };
     this.roomRef.child("chats").push(chat);
   }
-
+  //pick a card from the deck
   pickCard(){
     return new Promise<string>(
       (resolve, reject)=>{
         this.gameService.pickCard(this.roomRef).then(
         (card: string)=>{
           resolve(card);
+        },
+        (error)=>{
+          reject(error);
         });
       }
     );
   }
+  //pick a card to start the game
   pickStartCard(){
    return new Promise(
      (resolve, reject)=>{
       this.gameService.pickCard(this.roomRef).then(
         (card: string)=>{
-          if(card.includes("wild")){
+          if(card.includes("wild")||card.includes("picker")||card.includes("skip")||card.includes("reverse")){
             this.pickStartCard().then(
               (NewCard: string)=>{
                 this.roomRef.child("game/cards").push(card);
@@ -175,39 +164,40 @@ export class RoomService implements OnDestroy{
           }else{
             resolve(card);
           }
-        });
-     }
-   );
-  }
-  putCard(card: string){
-    this.roomRef.child("game/current_card").once("value",
-    (dataSnapshot)=>{
-      const oldCard = dataSnapshot.val();
-      this.roomRef.child("game/cards").push(oldCard);
-      this.roomRef.child("game/current_card").set(card);
-    });
-  }
-
-  reverseCard(){
-    return new Promise(
-      (resolve)=>{
-        this.roomRef.child("game/turn").once("value",
-        (dataSnapshot)=>{
-          const newTurn = dataSnapshot.val()*-1;
-          this.roomRef.child("game/turn").set(newTurn);
+        },
+        (error)=>{
+          reject(error);
         });
       }
-    )
+   );
   }
 
-
+  //updateTurn
+  updateTurn(){
+    const currentIndex = this.players.indexOf(firebase.auth().currentUser.displayName);
+    this.roomRef.child("game/turn").once("value",
+    (dataSnapshot)=>{
+      const newPlayerIndex = (currentIndex+dataSnapshot.val())%this.players.length;
+      this.roomRef.child("game/current_player").set(this.players[newPlayerIndex]);
+    },
+    ()=>{
+      this.updateTurn();
+    });
+  }
+  //disconnect from room
   disconnect(){
-    this.chats = [];
     if(this.isAdmin){
       this.roomRef.remove();
+    }else{
+      try{
+        this.playerRef.remove();
+      }catch{
+        return false;
+      }
     }
+    this.chats = [];
+    this.roomRef.off();
     this.isAdmin = false;
-    this.playerRef.remove();
   }
 
   ngOnDestroy(){
