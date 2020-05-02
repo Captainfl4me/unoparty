@@ -1,0 +1,26 @@
+<div class="container">
+  <button (click)="onDeconnect()">Se déconnecter</button>
+  <h3>Salle public</h3>
+  <ul class="list-group">
+
+    <p>Aucune salle ouverte..</p>
+  </ul>
+  <button (click)="createRoom = true">Creer une nouvelle salle</button>
+  <form [formGroup]="createRoomForm" (ngSubmit)="onCreateRoom()" *ngIf="createRoom" class="pop-up">
+    <a (click)="createRoom = false">*Close*</a>
+    <h2>Nouvelle salle</h2>
+    <div class="form-group">
+      <label for="name">Nom de la salle</label>
+      <input type="text" id="name" formControlName="name" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="players">Nombre de jouers</label>
+      <input type="number" min="2" max="10" id="players" formControlName="players" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="isPrivate">Salle privée</label>
+      <input type="checkbox" id="isPrivate" formControlName="isPrivate" class="form-control">
+    </div>
+    <button type="submit" [disabled]="createRoomForm.invalid">Créer</button>
+  </form>
+</div>
