@@ -140,5 +140,10 @@
   "defaultProject": "uno",
   "cli": {
     "analytics": "a2d564b8-16d6-4c87-b9a6-ec33d864ce45"
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "styleext": "scss"
+    }
   }
 }

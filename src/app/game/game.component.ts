@@ -16,12 +16,15 @@ export class GameComponent implements OnInit, OnDestroy {
   roomId: string;
   roomName: string = "";
   gameRef: firebase.database.Reference;
+  playerName: string;
 
   cards: Array<string>=[];
   canPickCard: boolean = true;
 
   currentCard: string = "";
   currentPlayer: string;
+  playersList: Array<{name: string, cards: number}>=[];
+  playersSubscription: Subscription;
   canPlay: boolean = false;
 
   isSelectingColor: boolean = false;
@@ -39,6 +42,10 @@ export class GameComponent implements OnInit, OnDestroy {
     this.roomService.connect(this.roomId).then(
       (Ref)=>{
         this.gameRef = Ref;
+        this.playerName = firebase.auth().currentUser.displayName;
+        this.cards=[];
+        this.playersList=[];
+
         for(let index = 0; index < 7; index++){
           this.onPickCard(true);
         }
@@ -47,13 +54,17 @@ export class GameComponent implements OnInit, OnDestroy {
         (current_card_snapshot)=>{
           this.currentCard = current_card_snapshot.val();
         });
+        //update players list
+        this.playersSubscription = this.roomService.playersSubject.subscribe((players)=>{
+          this.playersList = players;
+        });
 
         //update current player
         this.gameRef.child("current_player").on("value",
           (current_player_snapshot)=>{
             this.currentPlayer = current_player_snapshot.val();
             //check if is player turn and if it is update action
-            if(this.currentPlayer==firebase.auth().currentUser.displayName){
+            if(this.currentPlayer==this.playerName){
               this.gameRef.child("action_card").once("value",
                 (action_card_snapshot)=>{
                   //check if color is forced
@@ -69,7 +80,7 @@ export class GameComponent implements OnInit, OnDestroy {
                     if(action_card=="skip_turn"){
                       this.gameRef.child("action_card").remove().then(
                         ()=>{
-                          this.roomService.updateTurn();
+                          this.roomService.updateTurn(this.cards.length);
                         }
                       );
                     }else if(action_card.includes("pick")){
@@ -83,7 +94,7 @@ export class GameComponent implements OnInit, OnDestroy {
                         }
                         this.gameRef.child("action_card").remove().then(
                           ()=>{
-                            this.roomService.updateTurn();
+                            this.roomService.updateTurn(this.cards.length);
                           }
                         );
                       }
@@ -111,7 +122,7 @@ export class GameComponent implements OnInit, OnDestroy {
           if(!skip){
             if(!this.canPlayCard(card)){
               this.canPlay = false;
-              this.roomService.updateTurn();
+              this.roomService.updateTurn(this.cards.length);
             }
           }
         },
@@ -153,7 +164,7 @@ export class GameComponent implements OnInit, OnDestroy {
       ()=>{
         this.putCard(name);
         this.cards.splice(index, 1);
-        this.roomService.updateTurn();
+        this.roomService.updateTurn(this.cards.length);
       }
     );
   }
@@ -197,7 +208,7 @@ export class GameComponent implements OnInit, OnDestroy {
         ()=>{
           this.putCard(this.colorCard.name);
           this.cards.splice(this.colorCard.index, 1);
-          this.roomService.updateTurn();
+          this.roomService.updateTurn(this.cards.length);
         }
       );
       this.isSelectingColor=false;
@@ -225,6 +236,9 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(){
+    if(this.playersSubscription){
+      this.playersSubscription.unsubscribe();
+    }
     this.roomService.disconnect();
   }
 }

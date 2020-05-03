@@ -17,8 +17,8 @@ export class RoomService implements OnDestroy{
   chats: any = [];
   chatSubject = new Subject<Array<string>>();
 
-  players: Array<string>=[];
-  playersSubject = new Subject<Array<string>>();
+  players: Array<{name: string, cards: number}>=[];
+  playersSubject = new Subject<Array<{name: string, cards: number}>>();
   playerRef: firebase.database.Reference;
 
   isAdmin: boolean = false;
@@ -87,19 +87,21 @@ export class RoomService implements OnDestroy{
                 //left and join message listener
                 this.roomRef.child("game/players").on("child_added",
                 (dataSnapshot)=>{
-                  const username = dataSnapshot.val().name;
-                  if(username!=firebase.auth().currentUser.displayName){
-                    this.players.push(username);
-                    this.chats.push({name: "", content: username+" vient de rejoindre la partie !"});
+                  const player = { name: dataSnapshot.val().name, cards: parseInt(dataSnapshot.val().cards) };
+                  if(player.name!=firebase.auth().currentUser.displayName){
+                    this.players.push(player);
+                    this.playersSubject.next(this.players);
+                    this.chats.push({name: "", content: player.name+" vient de rejoindre la partie !"});
                     this.chatSubject.next(this.chats);
                   }
                 });
                 this.roomRef.child("game/players").on("child_removed",
                 (dataSnapshot)=>{
-                  const username = dataSnapshot.val().name;
-                  if(username!=firebase.auth().currentUser.displayName){
-                    this.players.splice(this.players.indexOf(username), 1);
-                    this.chats.push({name: "", content: username+" vient de quitter la partie."});
+                  const player = { name: dataSnapshot.val().name, cards: parseInt(dataSnapshot.val().cards) };
+                  if(player.name!=firebase.auth().currentUser.displayName){
+                    this.players.splice(this.players.indexOf(player), 1);
+                    this.playersSubject.next(this.players);
+                    this.chats.push({name: "", content: player.name+" vient de quitter la partie."});
                     this.chatSubject.next(this.chats);
                   }
                 });
@@ -173,15 +175,15 @@ export class RoomService implements OnDestroy{
   }
 
   //updateTurn
-  updateTurn(){
-    const currentIndex = this.players.indexOf(firebase.auth().currentUser.displayName);
+  updateTurn(cards: number){
+    const currentIndex = this.players.indexOf({name: firebase.auth().currentUser.displayName, cards: cards});
     this.roomRef.child("game/turn").once("value",
     (dataSnapshot)=>{
       const newPlayerIndex = (currentIndex+dataSnapshot.val())%this.players.length;
-      this.roomRef.child("game/current_player").set(this.players[newPlayerIndex]);
+      this.roomRef.child("game/current_player").set(this.players[newPlayerIndex].name);
     },
     ()=>{
-      this.updateTurn();
+      this.updateTurn(cards);
     });
   }
   //disconnect from room

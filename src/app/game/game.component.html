@@ -2,6 +2,15 @@
   <a routerLink="/">Quitter la salle</a>
   <h3>Salle : {{roomName}}</h3>
   <div>
+    <div class="players-container">
+      <!-- display players -->
+      <div *ngFor="let player of playersList" class="player-display" [style.background]="currentPlayer==playerName ? 'transparent' : 'red'">
+        <ul>
+          <li>{{player.name}}</li>
+          <li><small>{{player.cards}}</small></li>
+        </ul>
+      </div>
+    </div>
     <app-card cardName="card_back" (click)="onPickCard()"></app-card>
     <app-card [cardName]="currentCard"></app-card>
     <div *ngIf="forcedColor" style="width: 20px; height: 20px;" [style.background]="forcedColor"></div>
