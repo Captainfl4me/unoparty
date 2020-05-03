@@ -101,9 +101,9 @@ export class GameService {
         (dataSnapshot)=>{
           let oldValue:number = 0;
           if(dataSnapshot.val()){
-            oldValue = dataSnapshot.val().split("_")[1];
+            oldValue = parseInt(dataSnapshot.val().split("_")[1]);
           }
-          let pickCard = oldValue+2;
+          let pickCard:number = oldValue+2;
           gameRef.child("action_card").set("pick_"+pickCard.toString()).then(
             ()=>{
               resolve(true);
@@ -124,8 +124,12 @@ export class GameService {
       (resolve, reject)=>{
         gameRef.child("action_card").once("value",
         (dataSnapshot)=>{
-          const oldValue = dataSnapshot.val() ? dataSnapshot.val() : 0;
-          gameRef.child("action_card").set("pick_"+(oldValue+4).toString()).then(
+          let oldValue:number = 0;
+          if(dataSnapshot.val()){
+            oldValue = parseInt(dataSnapshot.val().split("_")[1]);
+          }
+          let pickCard:number = oldValue+2;
+          gameRef.child("action_card").set("pick_"+pickCard.toString()).then(
             ()=>{
               this.changeColor(gameRef, color).then(()=>{ resolve(true); });
             },

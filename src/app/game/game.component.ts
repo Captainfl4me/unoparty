@@ -27,7 +27,9 @@ export class GameComponent implements OnInit, OnDestroy {
   isSelectingColor: boolean = false;
   selectedColor: string = "";
   colorCard: {name: string, index: number};
+
   forcedColor: string;
+  isStackingCard: boolean = false;
 
   constructor(private activatedRoute: ActivatedRoute, private roomService: RoomService, private gameService: GameService, private router: Router) { }
 
@@ -73,9 +75,9 @@ export class GameComponent implements OnInit, OnDestroy {
                     }else if(action_card.includes("pick")){
                       const pickValue = action_card.split("_")[1];
                       this.cards.forEach(
-                        (card)=>{ if(card.includes(action_card.split("_")[0]) && !card.includes("color")){ this.canPlay=true; } }
+                        (card)=>{ if(card.includes(this.currentCard.split("_")[this.currentCard.split("_").length - 1]) && !card.includes("color")){ this.isStackingCard = true; console.log("stack card")} }
                       );
-                      if(!this.canPlay){
+                      if(!this.isStackingCard){
                         for (let index = 0; index < parseInt(pickValue); index++) {
                           this.onPickCard(true);
                         }
@@ -123,14 +125,7 @@ export class GameComponent implements OnInit, OnDestroy {
   onPutCard(index: number, name: string){
     if(this.canPlay){
       if(this.forcedColor && name.includes(this.forcedColor)){
-        this.isSelectingColor=false;
-        this.actionCard(name).then(
-          ()=>{
-            this.putCard(name);
-            this.cards.splice(index, 1);
-            this.roomService.updateTurn();
-          }
-        );
+        this.playCard(index, name);
       }else if(name.includes("wild")){
         this.isSelectingColor=true;
         this.colorCard={name: name, index: index};
@@ -139,19 +134,31 @@ export class GameComponent implements OnInit, OnDestroy {
         const color = names[0];
         const value = names[1];
         if(this.currentCard.includes(color) || this.currentCard.includes(value)){
-          this.isSelectingColor=false;
-          this.actionCard(name).then(
-            ()=>{
-              this.putCard(name);
-              this.cards.splice(index, 1);
-              this.roomService.updateTurn();
-            }
-          );
+          this.playCard(index, name);
         }
+      }
+    }else if(this.isStackingCard){
+      if(name.includes("wild_pick") && this.currentCard.includes("wild_pick")){
+        this.isSelectingColor=true;
+        this.colorCard={name: name, index: index};
+      }else if(this.currentCard.includes("picker") && name.includes("picker")){
+        this.playCard(index, name);
       }
     }
   }
-  canPlayCard(name:string): boolean{
+
+  playCard(index: number, name: string){
+    this.isSelectingColor=false;
+    this.actionCard(name).then(
+      ()=>{
+        this.putCard(name);
+        this.cards.splice(index, 1);
+        this.roomService.updateTurn();
+      }
+    );
+  }
+
+  canPlayCard(name:string):boolean{
     if(name.includes("wild")){
       return true;
     }else{
@@ -159,6 +166,8 @@ export class GameComponent implements OnInit, OnDestroy {
       const color = names[0];
       const value = names[1];
       if(this.currentCard.includes(color) || this.currentCard.includes(value)){
+        return true;
+      }else if(this.forcedColor==color){
         return true;
       }else{
         return false;
@@ -177,6 +186,7 @@ export class GameComponent implements OnInit, OnDestroy {
         this.gameRef.child("cards").push(oldCard);
         this.gameRef.child("current_card").set(card);
         this.canPlay=false;
+        this.isStackingCard = false;
     });
   }
   //select a color
