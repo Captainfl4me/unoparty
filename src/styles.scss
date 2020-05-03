@@ -1,1 +1,25 @@
 /* You can add global styles to this file, and also import other style files */
+html{
+  background : var(--bg);
+  font-family: var(--font);
+
+  --bg: white;
+}
+html[data-theme='flat-dark']{
+  --bg: #36393E;
+  --container: #DFE6E9;
+  --form-control-background: #36393E;
+  --form-control-active: #0775AB;
+  --form-control-submit: #3FB0E7;
+  --font-color: white;
+  --font-color-darker: #67696D;
+  --font-color-danger: #C0392B;
+  --title-color: white;
+  --font: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  --border-radius: 0.6em;
+  --url: "assets/cards_flat";
+}
+html[data-theme='flast-light']{
+  --bg: white;
+  --url: "assets/cards_design";
+}
