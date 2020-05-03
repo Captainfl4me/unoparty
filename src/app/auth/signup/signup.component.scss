@@ -1,0 +1,104 @@
+//global container
+.container-global{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+//sign in container
+.container{
+  background: var(--container);
+  border-radius: var(--border-radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2em;
+}
+
+/*
+.title{
+  text-align: center;
+}
+*/
+
+.form-container{
+  display: flex;
+  flex-direction: column;
+  padding: 2em;
+}
+//custom input
+.form-group{
+  color: var(--font-color-darker);
+  display: flex;
+  flex-direction: column;
+  margin-top: 1em;
+}
+.form-control{
+  border: none;
+  padding: 1em;
+  font-size: 1em;
+  margin-top: 0.5em;
+  outline: none;
+  border-radius: var(--border-radius);
+  color: var(--font-color);
+  background: var(--form-control-background);
+  width: 18em;
+}
+//autocomplete fix
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  border: none;
+  -webkit-text-fill-color: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.form-submit{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2em;
+}
+.error-msg{
+  margin-right: 0.5em;
+  color: var(--font-color-danger);
+}
+.form-submit button{
+  cursor: pointer;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  border-radius: var(--border-radius);
+  border: none;
+  color: var(--font-color);
+  background: var(--form-control-submit);
+  padding: 1em;
+  font-size: 1em;
+  transition: 0.2s;
+  outline: none;
+}
+.form-submit button:disabled{
+  cursor: default;
+  color: var(--font-color-darker);
+  background: var(--form-control-background);
+}
+.form-submit button:hover:enabled{
+  color: var(--font-color);
+  background: var(--form-control-active);
+}
+
+.signup{
+  text-align: center;
+}

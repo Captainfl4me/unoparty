@@ -5,6 +5,20 @@ html{
 
   --bg: white;
 }
+a:link{
+  text-decoration: none;
+  color: var(--form-control-submit);
+  transition: 0.2s;
+}
+a:visited{
+  text-decoration: none;
+  color: var(--form-control-submit);
+  transition: 0.2s;
+}
+a:hover{
+  text-decoration: underline;
+}
+//flat-dark theme
 html[data-theme='flat-dark']{
   --bg: #36393E;
   --container: #DFE6E9;
@@ -19,7 +33,26 @@ html[data-theme='flat-dark']{
   --border-radius: 0.6em;
   --url: "assets/cards_flat";
 }
-html[data-theme='flast-light']{
+
+//flat-light theme
+html[data-theme='flat-light']{
   --bg: white;
   --url: "assets/cards_design";
+}
+
+.google{
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  margin: 1em;
+  padding: 0.8em;
+  border: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 2px 5px grey;
 }

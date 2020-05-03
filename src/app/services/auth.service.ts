@@ -45,12 +45,11 @@ export class AuthService{
             );
           },
           (error)=>{
-            console.log(error.code);
             switch(error.code){
               case "auth/email-already-in-use":
-                reject("email déjà utilisé !");
+                reject("Email déjà utilisé !");
               case "auth/weak-password":
-                reject("le mot de passe doit faire au moins 6 caractères");
+                reject("Le mot de passe doit faire au moins 6 caractères.");
               default:
                 reject(error.message);
             }
@@ -71,7 +70,6 @@ export class AuthService{
             resolve(this.isAuth);
           },
           (error)=>{
-            console.log(error.code);
             switch(error.code){
               case "auth/user-not-found":
                 reject("Utilisateur introuvable");
