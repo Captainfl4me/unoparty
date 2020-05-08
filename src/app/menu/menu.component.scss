@@ -1,0 +1,269 @@
+.container{
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+//bar user
+.bar-container{
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  background: var(--container);
+  border-radius: 1em;
+}
+.user-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding-right: 1em;
+  padding-left: 1em;
+}
+a{
+  color: var(--font-color-darker);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.profile-image{
+  width: 2em;
+  height: 2em;
+  border-radius: 50%;
+  margin: 1em;
+}
+
+//dropdown
+.bar-container:hover > .dropdown{
+  max-height: 500px;
+  transition: max-height 0.25s ease-in;
+}
+.dropdown{
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.15s ease-out;
+}
+.dropdown ul{
+  list-style-type: none;
+  background: var(--container);
+  border-bottom-left-radius: 1em;
+  border-bottom-right-radius: 1em;
+  padding: 0;
+  margin: 0;
+}
+.dropdown li{
+  padding: 1em;
+  margin: 0;
+  background: var(--container);
+  transition: all 0.2s ease;
+}
+.dropdown li:last-child{
+  border-bottom-left-radius: 1em;
+  border-bottom-right-radius: 1em;
+}
+.dropdown li:hover{
+  background: var(--form-control-submit);
+}
+.dropdown li:hover > a{
+  color: var(--font-color);
+}
+
+//svg icon
+.svg-icon {
+  width: 1em;
+  height: 1em;
+}
+.svg-icon path,
+.svg-icon polygon,
+.svg-icon rect {
+  fill: var(--font-color-darker);
+}
+.svg-icon circle {
+  stroke: var(--font-color-darker);
+  stroke-width: 1;
+}
+
+//panel container
+.panel-container{
+  background: var(--container);
+  padding: 1em;
+  margin: 1em;
+  border-radius: 1em;
+  height: auto;
+  transition: height 0.5s ease;
+}
+.panel-container button{
+  cursor: pointer;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  border-radius: var(--border-radius);
+  border: none;
+  color: var(--font-color);
+  background: var(--form-control-submit);
+  padding: 1em;
+  font-size: 1em;
+  transition: 0.2s;
+  outline: none;
+}
+.panel-container button:hover:enabled{
+  color: var(--font-color);
+  background: var(--form-control-active);
+}
+.panel-container button:disabled{
+  cursor: default;
+  color: var(--font-color-darker);
+  background: var(--form-control-background);
+}
+
+//secondary
+.hidden-container{
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  transition: all 0.5s ease-out;
+}
+.show-container{
+  min-width: 18em;
+  overflow: hidden;
+  max-height: 100em;
+  max-width: 100em;
+  transition: all 0.5s ease-in;
+}
+//custom input
+.form-group{
+  color: var(--font-color-darker);
+  display: flex;
+  flex-direction: column;
+  margin-top: 1em;
+}
+.form-control{
+  border: none;
+  padding: 1em;
+  font-size: 1em;
+  margin-top: 0.5em;
+  outline: none;
+  border-radius: var(--border-radius);
+  color: var(--font-color);
+  background: var(--form-control-background);
+  width: 18em;
+}
+
+//input number disable button
+input[type="number"] {
+  -webkit-appearance: textfield;
+     -moz-appearance: textfield;
+          appearance: textfield;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+//custom input number
+.form-control-number{
+  border-radius: var(--border-radius);
+  color: var(--font-color);
+  background: var(--form-control-background);
+  outline: none;
+  margin-top: 0.5em;
+  position: relative;
+}
+.form-control-number input{
+  border: none;
+  color: var(--font-color);
+  background: var(--form-control-background);
+  border-radius: var(--border-radius);
+  outline: none;
+  text-align: center;
+  padding: 1em;
+  font-size: 1em;
+  width: 18em;
+}
+.form-control-number button{
+  position: absolute;
+  width: 3em;
+  text-align: center;
+}
+.form-control-number .down{
+  left: 0;
+}
+.form-control-number .up{
+  right: 0;
+}
+
+//checkbox container
+.form-group-checkbox{
+  color: var(--font-color-darker);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+//custom checkbox
+
+/* box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 3em;
+  height: 1.5em;
+  margin-left: 0.5em;
+}
+
+/* Hide default HTML checkbox */
+.switch > input {
+  clip-path: polygon(0 0);
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--form-control-background);
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 1em;
+  width: 1em;
+  left: 4px;
+  bottom: 4px;
+  background-color: var(--font-color);
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+.slider.round {
+  border-radius: 1.5em;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(1.5em);
+  -ms-transform: translateX(1.5em);
+  transform: translateX(1.5em);
+}

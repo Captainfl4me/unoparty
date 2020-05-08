@@ -1,26 +1,59 @@
 <div class="container">
-  <button (click)="onDeconnect()">Se déconnecter</button>
-  <h3>Salle public</h3>
-  <ul class="list-group">
+  <div class="bar-container">
+    <div class="user-container">
+      <a>{{ username }}</a>
+      <img [src]="picture" class="profile-image">
+      <svg class="svg-icon user-dropdown" viewBox="0 0 20 20" transform="scale(2)">
+          <g>
+            <path fill="none" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314
+              c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743
+              s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314
+              c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path>
+          </g>
+      </svg>
+    </div>
+    <div class="dropdown">
+      <ul>
+        <li><a>Profile</a></li>
+        <li><a (click)="onDeconnect()">Se déconnecter</a></li>
+      </ul>
+    </div>
+  </div>
+  <!-- principal panel -->
+  <div class="panel-container">
+    <h3>Salle public</h3>
+    <ul class="list-group">
+      <p>Aucune salle ouverte..</p>
+    </ul>
+  </div>
 
-    <p>Aucune salle ouverte..</p>
-  </ul>
-  <button (click)="createRoom = true">Creer une nouvelle salle</button>
-  <form [formGroup]="createRoomForm" (ngSubmit)="onCreateRoom()" *ngIf="createRoom" class="pop-up">
-    <a (click)="createRoom = false">*Close*</a>
-    <h2>Nouvelle salle</h2>
-    <div class="form-group">
-      <label for="name">Nom de la salle</label>
-      <input type="text" id="name" formControlName="name" class="form-control">
-    </div>
-    <div class="form-group">
-      <label for="players">Nombre de jouers</label>
-      <input type="number" min="2" max="10" id="players" formControlName="players" class="form-control">
-    </div>
-    <div class="form-group">
-      <label for="isPrivate">Salle privée</label>
-      <input type="checkbox" id="isPrivate" formControlName="isPrivate" class="form-control">
-    </div>
-    <button type="submit" [disabled]="createRoomForm.invalid">Créer</button>
-  </form>
+  <!-- create new room panel -->
+  <div class="panel-container">
+    <form [formGroup]="createRoomForm" (ngSubmit)="onCreateRoom()" [class]="createRoom ? 'show-container' : 'hidden-container'">
+      <div>
+        <h2>Nouvelle salle</h2>
+        <div class="form-group">
+          <label for="name">Nom de la salle</label>
+          <input type="text" id="name" formControlName="name" class="form-control" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="players">Nombre de joueurs</label>
+          <div class="form-control-number">
+            <button type="button" class="down" onclick="this.nextElementSibling.stepDown()">-</button>
+            <input type="number" min="2" max="10" step="1" id="players" formControlName="players" >
+            <button type="button" class="up" onclick="this.previousElementSibling.stepUp()">+</button>
+          </div>
+        </div>
+        <div class="form-group-checkbox">
+          <label for="isPrivate">Salle privée</label>
+          <label class="switch" for="isPrivate">
+            <input type="checkbox" id="isPrivate" formControlName="isPrivate" class="form-control">
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+      <button type="submit" [disabled]="createRoomForm.invalid">Creer une nouvelle salle</button>
+    </form>
+    <button (click)="createRoom = true" *ngIf="!createRoom" id="new-room">Creer une nouvelle salle</button>
+  </div>
 </div>

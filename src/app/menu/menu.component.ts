@@ -14,9 +14,14 @@ export class MenuComponent implements OnInit {
   createRoom: boolean = false;
   createRoomForm: FormGroup;
 
+  picture: string;
+  username: string;
+
   constructor(private formBuilder: FormBuilder, private router: Router, private authService: AuthService, private roomService: RoomService) { }
 
   ngOnInit(): void {
+    this.username = this.authService.username;
+    this.picture = this.authService.picture;
     this.initForm();
   }
   initForm(){
@@ -28,19 +33,25 @@ export class MenuComponent implements OnInit {
   }
 
   onCreateRoom(){
-    const value = this.createRoomForm.value;
-    this.roomService.createNewRoom(value.isPrivate, value.name).then(
-      (roomId)=>{
-        this.router.navigate(['game', roomId]);
-      },
-      (error)=>{
-        console.log(error);
-      }
-    )
-    this.createRoom = false;
+    if(this.createRoom){
+      const value = this.createRoomForm.value;
+      this.roomService.createNewRoom(value.isPrivate, value.name).then(
+        (roomId)=>{
+          this.router.navigate(['game', roomId]);
+        },
+        (error)=>{
+          console.log(error);
+        }
+      );
+      this.createRoom = false;
+    }
   }
 
   onDeconnect(){
-    this.authService.SignOut();
+    this.authService.SignOut().then(
+      ()=>{
+        this.router.navigate(['/']);
+      }
+    );
   }
 }
