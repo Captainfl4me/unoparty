@@ -39,7 +39,7 @@ export class SignupComponent implements OnInit {
   }
 
   onSignUpWithGoogle(){
-    this.authService.SignInWithGoogle().then(
+    this.authService.SignUpWithGoogle().then(
       ()=>{
         this.router.navigate(['/']);
       },
