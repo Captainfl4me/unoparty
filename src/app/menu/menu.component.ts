@@ -11,8 +11,9 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 })
 export class MenuComponent implements OnInit {
 
-  createRoom: boolean = false;
+  createRoom: boolean=false;
   createRoomForm: FormGroup;
+  isCreatingRoom: boolean=false;
 
   picture: string;
   username: string;
@@ -35,15 +36,17 @@ export class MenuComponent implements OnInit {
   onCreateRoom(){
     if(this.createRoom){
       const value = this.createRoomForm.value;
+      this.isCreatingRoom=true;
       this.roomService.createNewRoom(value.isPrivate, value.name).then(
         (roomId)=>{
+          this.createRoom = false;
+          this.isCreatingRoom=false;
           this.router.navigate(['game', roomId]);
         },
         (error)=>{
           console.log(error);
         }
       );
-      this.createRoom = false;
     }
   }
 

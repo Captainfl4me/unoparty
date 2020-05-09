@@ -56,4 +56,11 @@
     </form>
     <button (click)="createRoom = true" *ngIf="!createRoom" id="new-room">Creer une nouvelle salle</button>
   </div>
+  <!--pop up loading panel-->
+  <div *ngIf="isCreatingRoom" class="pop-up-container">
+    <div class="pop-up-panel">
+      <div class="loading-ring"></div>
+      <span>Creation de la salle..</span>
+    </div>
+  </div>
 </div>
