@@ -36,7 +36,7 @@ export class AuthService{
                   this.userPreferences=value;
                   this.createCookie("theme", this.userPreferences.theme, 50000);
                   document.getElementsByTagName("html")[0].setAttribute("data-theme", this.userPreferences.theme);
-                }
+                },(error)=>{ console.log(error); }
               );
             }
           });

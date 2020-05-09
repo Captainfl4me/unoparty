@@ -20,7 +20,7 @@ export class GameComponent implements OnInit, OnDestroy {
   playerName: string;
 
   cards: Array<string>=[];
-  cardTheme: string;
+  cardTheme: string="flat";
   canPickCard: boolean = true;
 
   currentCard: string = "";
@@ -39,6 +39,7 @@ export class GameComponent implements OnInit, OnDestroy {
   constructor(private activatedRoute: ActivatedRoute, private roomService: RoomService, private gameService: GameService, private router: Router, private authService: AuthService) { }
 
   ngOnInit(): void {
+    this.cardTheme = this.authService.userPreferences.cards;
     this.roomId = this.activatedRoute.snapshot.params['id'];
     console.log("connect room : "+this.roomId);
     this.roomService.connect(this.roomId).then(
@@ -47,7 +48,6 @@ export class GameComponent implements OnInit, OnDestroy {
         this.playerName = firebase.auth().currentUser.displayName;
         this.cards=[];
         this.playersList=[];
-        this.cardTheme = this.authService.userPreferences.cards;
 
         for(let index = 0; index < 7; index++){
           this.onPickCard(true);
