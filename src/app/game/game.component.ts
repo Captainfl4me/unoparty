@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import { GameService } from '../services/game.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-game',
@@ -19,6 +20,7 @@ export class GameComponent implements OnInit, OnDestroy {
   playerName: string;
 
   cards: Array<string>=[];
+  cardTheme: string;
   canPickCard: boolean = true;
 
   currentCard: string = "";
@@ -34,7 +36,7 @@ export class GameComponent implements OnInit, OnDestroy {
   forcedColor: string;
   isStackingCard: boolean = false;
 
-  constructor(private activatedRoute: ActivatedRoute, private roomService: RoomService, private gameService: GameService, private router: Router) { }
+  constructor(private activatedRoute: ActivatedRoute, private roomService: RoomService, private gameService: GameService, private router: Router, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.roomId = this.activatedRoute.snapshot.params['id'];
@@ -45,6 +47,7 @@ export class GameComponent implements OnInit, OnDestroy {
         this.playerName = firebase.auth().currentUser.displayName;
         this.cards=[];
         this.playersList=[];
+        this.cardTheme = this.authService.userPreferences.cards;
 
         for(let index = 0; index < 7; index++){
           this.onPickCard(true);

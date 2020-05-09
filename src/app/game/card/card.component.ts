@@ -10,7 +10,7 @@ import { EventEmitter } from 'protractor';
 export class CardComponent implements OnInit {
 
   @Input() cardName: string;
-  @Input() cardIndex: number;
+  @Input() cardTheme: number;
 
   constructor(private roomService: RoomService) { }
 

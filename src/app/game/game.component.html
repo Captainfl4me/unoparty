@@ -11,12 +11,12 @@
         </ul>
       </div>
     </div>
-    <app-card cardName="card_back" (click)="onPickCard()"></app-card>
-    <app-card [cardName]="currentCard"></app-card>
+    <app-card cardName="card_back" [cardTheme]="cardTheme" (click)="onPickCard()"></app-card>
+    <app-card [cardName]="currentCard" [cardTheme]="cardTheme"></app-card>
     <div *ngIf="forcedColor" style="width: 20px; height: 20px;" [style.background]="forcedColor"></div>
   </div>
   <div class="deck-container" style="display: flex; flex-direction: row;">
-    <app-card *ngFor="let card of cards; let i = index" [cardName]="card" [cardIndex]="i" (click)="onPutCard(i, card)"></app-card>
+    <app-card *ngFor="let card of cards; let i = index" [cardName]="card" [cardTheme]="cardTheme" (click)="onPutCard(i, card)"></app-card>
   </div>
   <div *ngIf="isSelectingColor">
     <h4>Choisir la couleur</h4><span (click)="isSelectingColor=false">*close*</span>
