@@ -10,7 +10,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 })
 export class ChatComponent implements OnInit, OnDestroy {
 
-  chats;
+  chats: any;
   chatsSubscribe: Subscription;
 
   submitChat: FormGroup;

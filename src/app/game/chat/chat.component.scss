@@ -1,0 +1,90 @@
+.container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: var(--border-radius);
+  background: var(--container);
+  padding: 1em;
+}
+.chat-container{
+  background: var(--form-control-background);
+  border-radius: var(--border-radius);
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  max-height: 60vh;
+  overflow: auto;
+}
+.chat-container li{
+  margin: 0.4em;
+}
+.chat-container h4, p{
+  color: var(--font-color);
+  margin: 0;
+  margin-top: 0.1em;
+}
+.form-group{
+  display: flex;
+}
+.form-control{
+  border: none;
+  padding: 1em;
+  font-size: 1em;
+  margin-top: 0.5em;
+  outline: none;
+  border-radius: var(--border-radius);
+  color: var(--font-color);
+  background: var(--form-control-background);
+  width: 16em;
+}
+.form-submit{
+  cursor: pointer;
+  border: none;
+  border-radius: var(--border-radius);
+  background: var(--form-control-active);
+  color: var(--font-color);
+  margin-top: 0.5em;
+  padding: 1em;
+  transition: all 0.2s;
+}
+.form-submit:enabled:hover{
+  background: var(--form-control-submit);
+}
+
+//send message icon
+.send-icon {
+  box-sizing: border-box;
+  position: relative;
+  display: block;
+  transform: scale(1);
+  width: 20px;
+  height: 16px;
+  border: 2px solid;
+  border-bottom: 0;
+  box-shadow: -6px 8px 0 -6px, 6px 8px 0 -6px;
+}
+.send-icon::after,
+.send-icon::before {
+  content: "";
+  display: block;
+  box-sizing: border-box;
+  position: absolute;
+  width: 8px
+}
+.send-icon::before {
+  border: 2px solid;
+  border-top-color: transparent;
+  border-bottom-left-radius: 20px;
+  right: 4px;
+  bottom: -6px;
+  height: 6px
+}
+.send-icon::after {
+  height: 2px;
+  background: currentColor;
+  box-shadow: 0 4px 0 0;
+  left: 4px;
+  top: 4px
+}

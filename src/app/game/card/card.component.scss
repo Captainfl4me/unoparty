@@ -1,0 +1,11 @@
+.cursor{
+  cursor: pointer;
+}
+.notFixed{
+  padding-top: 10em;
+  transition: all 0.2s;
+}
+.notFixed:hover{
+  padding: 0;
+  padding-bottom: 8em;
+}

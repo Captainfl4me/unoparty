@@ -11,6 +11,8 @@ export class CardComponent implements OnInit {
 
   @Input() cardName: string;
   @Input() cardTheme: number;
+  @Input() cursor: boolean=true;
+  @Input() fixed: boolean = false;
 
   constructor(private roomService: RoomService) { }
 

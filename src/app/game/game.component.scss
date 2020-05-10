@@ -1,0 +1,64 @@
+.global-container{
+  display: flex;
+  justify-content: space-between;
+}
+.container{
+  width: 100%;
+}
+.card-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.deck-container{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+  margin-top: 2em;
+}
+.card:last-child{
+  flex:1;
+  min-width: 120px;
+  max-width: 120px;
+}
+.card{
+  flex: 1;
+  min-width: 20px;
+  max-width: 120px;
+}
+/*select color pop-up*/
+.pop-up-container{
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+.pop-up-panel{
+  padding: 2em;
+  border-radius: var(--border-radius);
+  background: var(--container);
+  box-shadow: 0px 0px 5px var(--form-control-background);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.pop-up-list{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.pop-up-list button{
+  margin: 1em;
+  padding: 1em;
+  color: var(--font-color);
+  border: none;
+}

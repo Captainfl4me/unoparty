@@ -1,31 +1,37 @@
-<div>
-  <a routerLink="/">Quitter la salle</a>
-  <h3>Salle : {{roomName}}</h3>
-  <div>
-    <div class="players-container">
-      <!-- display players -->
-      <div *ngFor="let player of playersList" class="player-display" [style.background]="currentPlayer==playerName ? 'transparent' : 'red'">
-        <ul>
-          <li>{{player.name}}</li>
-          <li><small>{{player.cards}}</small></li>
-        </ul>
+<div class="global-container">
+  <div class="container">
+    <a routerLink="/">Quitter la salle</a>
+    <h3>Salle : {{roomName}}</h3>
+    <div class="game-container">
+      <div class="players-container">
+        <!-- display players -->
+        <div *ngFor="let player of playersList" class="player-display" [style.background]="currentPlayer==playerName ? 'transparent' : 'red'">
+          <ul>
+            <li>{{player.name}}</li>
+            <li><small>{{player.cards}}</small></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-container">
+        <app-card cardName="card_back" [cardTheme]="cardTheme" (click)="onPickCard()" [fixed]="true"></app-card>
+        <app-card [cardName]="currentCard" [cardTheme]="cardTheme" [fixed]="true" [cursor]="false"></app-card>
+        <div *ngIf="forcedColor" style="width: 20px; height: 20px;" [style.background]="forcedColor"></div>
+      </div>
+      <div class="deck-container">
+        <app-card *ngFor="let card of cards; let i = index" [cardName]="card" [cardTheme]="cardTheme" (click)="onPutCard(i, card)" class="card"></app-card>
       </div>
     </div>
-    <app-card cardName="card_back" [cardTheme]="cardTheme" (click)="onPickCard()"></app-card>
-    <app-card [cardName]="currentCard" [cardTheme]="cardTheme"></app-card>
-    <div *ngIf="forcedColor" style="width: 20px; height: 20px;" [style.background]="forcedColor"></div>
-  </div>
-  <div class="deck-container" style="display: flex; flex-direction: row;">
-    <app-card *ngFor="let card of cards; let i = index" [cardName]="card" [cardTheme]="cardTheme" (click)="onPutCard(i, card)"></app-card>
-  </div>
-  <div *ngIf="isSelectingColor">
-    <h4>Choisir la couleur</h4><span (click)="isSelectingColor=false">*close*</span>
-    <div>
-      <button (click)="selectColor('blue')">Bleu</button>
-      <button (click)="selectColor('yellow')">Jaune</button>
-      <button (click)="selectColor('green')">Vert</button>
-      <button (click)="selectColor('red')">Rouge</button>
+    <div class=".pop-up-container" *ngIf="isSelectingColor">
+      <div class=".pop-up-panel">
+        <h4>Choisir la couleur</h4><span (click)="isSelectingColor=false">*close*</span>
+        <div class="pop-up-list">
+          <button (click)="selectColor('blue')" style="background: var(--blue)">Bleu</button>
+          <button (click)="selectColor('yellow')" style="background: var(--yellow)">Jaune</button>
+          <button (click)="selectColor('green')" style="background: var(--green)">Vert</button>
+          <button (click)="selectColor('red')" style="background: var(--red)">Rouge</button>
+        </div>
+      </div>
     </div>
   </div>
+  <app-chat></app-chat>
 </div>
-<app-chat></app-chat>

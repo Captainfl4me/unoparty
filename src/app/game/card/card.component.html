@@ -1,3 +1,3 @@
-<div *ngIf="cardName!='' && cardName!=undefined">
+<div *ngIf="cardName!='' && cardName!=undefined" class="container" [class]="cursor ? 'cursor' : ''"[ngClass]="{notFixed: !fixed}">
   <img [src]="'assets/cards_'+cardTheme+'/'+cardName+'.png'" style="max-width: 120px;">
 </div>
