@@ -16,8 +16,12 @@ export class GameComponent implements OnInit, OnDestroy {
 
   roomId: string;
   roomName: string = "";
-  gameRef: firebase.database.Reference;
   playerName: string;
+  gameRef: firebase.database.Reference;
+
+  inGame: boolean;
+  isAdmin = false;
+  score: number = 0;
 
   cards: Array<string>=[];
   cardTheme: string="flat";
@@ -25,7 +29,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   currentCard: string = "";
   currentPlayer: string;
-  playersList: Array<{name: string, cards: number}>=[];
+  playersList: Array<{name: string, cards: number, score: number}>=[];
   playersSubscription: Subscription;
   canPlay: boolean = false;
 
@@ -39,23 +43,50 @@ export class GameComponent implements OnInit, OnDestroy {
   constructor(private activatedRoute: ActivatedRoute, private roomService: RoomService, private gameService: GameService, private router: Router, private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.cardTheme = this.authService.userPreferences.cards;
+    if(this.authService.userPreferences){
+      this.cardTheme = this.authService.userPreferences.cards;
+    }else{
+      this.authService.getUserPreferences().then(
+        ()=>{ this.cardTheme = this.authService.userPreferences.cards; },
+        (error)=>{ console.log(error); }
+      );
+    }
     this.roomId = this.activatedRoute.snapshot.params['id'];
-    console.log("connect room : "+this.roomId);
     this.roomService.connect(this.roomId).then(
       (Ref)=>{
         this.gameRef = Ref;
-        this.playerName = firebase.auth().currentUser.displayName;
         this.cards=[];
         this.playersList=[];
-
-        for(let index = 0; index < 7; index++){
-          this.onPickCard(true);
-        }
+        this.isAdmin = this.roomService.isAdmin;
+        this.playerName=firebase.auth().currentUser.displayName;
         //update currentCard
         this.gameRef.child("current_card").on("value",
         (current_card_snapshot)=>{
-          this.currentCard = current_card_snapshot.val();
+          const current_card = current_card_snapshot.val();
+          if(current_card){
+            if(!this.inGame){
+              this.cards=[];
+              for(let index = 0; index < 7; index++){
+                this.onPickCard(true);
+              }
+              this.inGame=true;
+            }
+            this.currentCard = current_card;
+          }else{
+            if(this.inGame && this.roomService.isConnect){
+              this.inGame=false;
+              for(let card of this.cards){
+                if(card.includes("wild")){
+                  this.score+=50;
+                }else if(card.includes("skip") || card.includes("reverse") || card.includes("picker")){
+                  this.score+=20
+                }else{
+                  this.score+=parseInt(card.split("_")[1]);
+                }
+              }
+              this.roomService.playerRef.update({score: this.score});
+            }
+          }
         });
         //update players list
         this.playersSubscription = this.roomService.playersSubject.subscribe((players)=>{
@@ -67,7 +98,7 @@ export class GameComponent implements OnInit, OnDestroy {
           (current_player_snapshot)=>{
             this.currentPlayer = current_player_snapshot.val();
             //check if is player turn and if it is update action
-            if(this.currentPlayer==this.playerName){
+            if(this.currentPlayer==firebase.auth().currentUser.displayName){
               this.gameRef.child("action_card").once("value",
                 (action_card_snapshot)=>{
                   //check if color is forced
@@ -83,21 +114,21 @@ export class GameComponent implements OnInit, OnDestroy {
                     if(action_card=="skip_turn"){
                       this.gameRef.child("action_card").remove().then(
                         ()=>{
-                          this.roomService.updateTurn(this.cards.length);
+                          this.roomService.updateTurn();
                         }
                       );
                     }else if(action_card.includes("pick")){
-                      const pickValue = action_card.split("_")[1];
+                      const pickValue = parseInt(action_card.split("_")[1]);
                       this.cards.forEach(
-                        (card)=>{ if(card.includes(this.currentCard.split("_")[this.currentCard.split("_").length - 1]) && !card.includes("color")){ this.isStackingCard = true; console.log("stack card")} }
+                        (card)=>{ if(card.includes(this.currentCard.split("_")[this.currentCard.split("_").length - 1])){ this.isStackingCard = true;} }
                       );
                       if(!this.isStackingCard){
-                        for (let index = 0; index < parseInt(pickValue); index++) {
+                        for (let index = 0; index < pickValue; index++) {
                           this.onPickCard(true);
                         }
                         this.gameRef.child("action_card").remove().then(
                           ()=>{
-                            this.roomService.updateTurn(this.cards.length);
+                            this.roomService.updateTurn();
                           }
                         );
                       }
@@ -122,10 +153,11 @@ export class GameComponent implements OnInit, OnDestroy {
       this.roomService.pickCard().then(
         (card: string)=>{
           this.cards.push(card);
+          this.roomService.playerRef.update({cards: this.cards.length});
           if(!skip){
             if(!this.canPlayCard(card)){
               this.canPlay = false;
-              this.roomService.updateTurn(this.cards.length);
+              this.roomService.updateTurn();
             }
           }
         },
@@ -167,7 +199,12 @@ export class GameComponent implements OnInit, OnDestroy {
       ()=>{
         this.putCard(name);
         this.cards.splice(index, 1);
-        this.roomService.updateTurn(this.cards.length);
+        this.roomService.playerRef.update({cards: this.cards.length});
+        if(this.cards.length==0){
+          this.gameRef.child("current_card").remove();
+        }else{
+          this.roomService.updateTurn();
+        }
       }
     );
   }
@@ -211,7 +248,7 @@ export class GameComponent implements OnInit, OnDestroy {
         ()=>{
           this.putCard(this.colorCard.name);
           this.cards.splice(this.colorCard.index, 1);
-          this.roomService.updateTurn(this.cards.length);
+          this.roomService.updateTurn();
         }
       );
       this.isSelectingColor=false;
@@ -238,9 +275,16 @@ export class GameComponent implements OnInit, OnDestroy {
     );
   }
 
+  InitParty(){
+    this.roomService.InitGame().then(
+      ()=>{}
+    );
+  }
+
   ngOnDestroy(){
     if(this.playersSubscription){
       this.playersSubscription.unsubscribe();
+      this.gameRef.child("current_card").off();
     }
     this.roomService.disconnect();
   }

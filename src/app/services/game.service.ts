@@ -128,7 +128,7 @@ export class GameService {
           if(dataSnapshot.val()){
             oldValue = parseInt(dataSnapshot.val().split("_")[1]);
           }
-          let pickCard:number = oldValue+2;
+          let pickCard:number = oldValue+4;
           gameRef.child("action_card").set("pick_"+pickCard.toString()).then(
             ()=>{
               this.changeColor(gameRef, color).then(()=>{ resolve(true); });

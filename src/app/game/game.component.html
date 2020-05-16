@@ -1,19 +1,29 @@
 <div class="global-container">
-  <div class="container">
+  <div class="container" [ngSwitch]="inGame">
     <a routerLink="/">Quitter la salle</a>
-    <h3>Salle : {{roomName}}</h3>
-    <div class="game-container">
+
+    <div class="score-container" *ngSwitchCase="false">
+      <h4>scores :</h4>
+      <ul class="player-list">
+        <li *ngFor="let player of playersList" class="player-list-item"><span>{{player.name+ (player.name==playerName? "(moi)": "")}}</span><small>{{player.score}}</small></li>
+      </ul>
+      <div [ngSwitch]="isAdmin" class="form-group-submit">
+        <button *ngSwitchCase="true" (click)="InitParty()" class="form-control-submit">Prochaine manche</button>
+        <p *ngSwitchDefault>En attente de l'hote...</p>
+      </div>
+    </div>
+    <div class="game-container" *ngSwitchCase="true">
       <div class="players-container">
         <!-- display players -->
-        <div *ngFor="let player of playersList" class="player-display" [style.background]="currentPlayer==playerName ? 'transparent' : 'red'">
-          <ul>
-            <li>{{player.name}}</li>
-            <li><small>{{player.cards}}</small></li>
+        <div *ngFor="let player of playersList" class="player-display">
+          <ul *ngIf="player.name!=playerName" class="player-profile" [style.background]="currentPlayer==player.name ? 'var(--form-control-submit)' : 'transparent'">
+            <li class="player-name">{{player.name}}</li>
+            <li class="player-cards"><img src="assets/icons/player_cards.png" width="40px"><span>{{player.cards}}</span></li>
           </ul>
         </div>
       </div>
       <div class="card-container">
-        <app-card cardName="card_back" [cardTheme]="cardTheme" (click)="onPickCard()" [fixed]="true"></app-card>
+        <app-card cardName="card_back" [cardTheme]="cardTheme" (click)="onPickCard()" [fixed]="true" style="position: absolute; left: 0;"></app-card>
         <app-card [cardName]="currentCard" [cardTheme]="cardTheme" [fixed]="true" [cursor]="false"></app-card>
         <div *ngIf="forcedColor" style="width: 20px; height: 20px;" [style.background]="forcedColor"></div>
       </div>
@@ -21,9 +31,20 @@
         <app-card *ngFor="let card of cards; let i = index" [cardName]="card" [cardTheme]="cardTheme" (click)="onPutCard(i, card)" class="card"></app-card>
       </div>
     </div>
-    <div class=".pop-up-container" *ngIf="isSelectingColor">
-      <div class=".pop-up-panel">
-        <h4>Choisir la couleur</h4><span (click)="isSelectingColor=false">*close*</span>
+    <div class="wait-container" *ngSwitchDefault>
+      <ul class="player-list">
+        <li *ngFor="let player of playersList"  class="player-list-item"><span>{{player.name+ (player.name==playerName? " (moi)": "")}}</span></li>
+      </ul>
+      <div [ngSwitch]="isAdmin" class="form-group-submit">
+        <button *ngSwitchCase="true" (click)="InitParty()" class="form-control-submit">Lancer la partie</button>
+        <p *ngSwitchDefault>En attente de l'hote...</p>
+      </div>
+    </div>
+
+    <div class="pop-up-container" *ngIf="isSelectingColor">
+      <div class="pop-up-panel">
+        <span (click)="isSelectingColor=false">*close*</span>
+        <h4>Choisir la couleur</h4>
         <div class="pop-up-list">
           <button (click)="selectColor('blue')" style="background: var(--blue)">Bleu</button>
           <button (click)="selectColor('yellow')" style="background: var(--yellow)">Jaune</button>

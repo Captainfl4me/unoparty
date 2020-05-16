@@ -2,6 +2,7 @@ import { Injectable, OnInit } from '@angular/core';
 import * as firebase from'firebase/app';
 import 'firebase/auth';
 import { Subject } from 'rxjs';
+import { promise } from 'protractor';
 
 @Injectable({
   providedIn: 'root'
@@ -24,22 +25,7 @@ export class AuthService{
           this.isAuth = true;
           this.username = firebase.auth().currentUser.displayName;
           this.picture = firebase.auth().currentUser.photoURL;
-          firebase.database().ref("users/"+firebase.auth().currentUser.uid).once("value",
-          (valueSnapshot)=>{
-            this.userPreferences = valueSnapshot.val();
-            if(this.userPreferences){
-              this.createCookie("theme", this.userPreferences.theme, 50000);
-              document.getElementsByTagName("html")[0].setAttribute("data-theme", this.userPreferences.theme);
-            }else{
-              firebase.database().ref("users/"+firebase.auth().currentUser.uid).set({cards: 'flat', theme: 'flat-dark'}).then(
-                (value)=>{
-                  this.userPreferences=value;
-                  this.createCookie("theme", this.userPreferences.theme, 50000);
-                  document.getElementsByTagName("html")[0].setAttribute("data-theme", this.userPreferences.theme);
-                },(error)=>{ console.log(error); }
-              );
-            }
-          });
+          this.getUserPreferences();
         }else{
           this.isAuth = false;
           this.username = null;
@@ -178,4 +164,29 @@ export class AuthService{
     else var expires = "";
     document.cookie = name+"="+value+expires+"; path=/";
   }
+  getUserPreferences(){
+    return new Promise(
+      (resolve, reject)=>{
+        firebase.database().ref("users/"+firebase.auth().currentUser.uid).once("value",
+          (valueSnapshot)=>{
+            this.userPreferences = valueSnapshot.val();
+            if(this.userPreferences){
+              this.createCookie("theme", this.userPreferences.theme, 50000);
+              document.getElementsByTagName("html")[0].setAttribute("data-theme", this.userPreferences.theme);
+              resolve();
+            }else{
+              firebase.database().ref("users/"+firebase.auth().currentUser.uid).set({cards: 'flat', theme: 'flat-dark'}).then(
+                (value)=>{
+                  this.userPreferences=value;
+                  this.createCookie("theme", this.userPreferences.theme, 50000);
+                  document.getElementsByTagName("html")[0].setAttribute("data-theme", this.userPreferences.theme);
+                  resolve();
+                },(error)=>{ reject(error); }
+              );
+            }
+        },(error)=>{ reject(error); });
+      }
+    )
+  }
+
 }

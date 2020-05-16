@@ -5,6 +5,7 @@
 .container{
   width: 100%;
 }
+/*game container*/
 .card-container{
   display: flex;
   justify-content: center;
@@ -28,6 +29,47 @@
   min-width: 20px;
   max-width: 120px;
 }
+//players container
+.players-container{
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-left: 2em;
+  margin-right: 2em;
+}
+.player-display{
+  margin: 0;
+  padding: 0;
+}
+.player-profile{
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+  margin-top: 0;
+  margin-bottom: 2em;
+  border-radius: var(--border-radius);
+}
+.player-name{
+  color: var(--font-color);
+  margin-bottom: 0.5em;
+}
+.player-cards{
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.player-cards span{
+  position: absolute;
+  color: white;
+  font-size: 24px;
+}
+
 /*select color pop-up*/
 .pop-up-container{
   position: absolute;
@@ -61,4 +103,75 @@
   padding: 1em;
   color: var(--font-color);
   border: none;
+}
+/*container score and wait */
+.score-container h4{
+  text-align: center;
+  color: var(--font-color);
+  font-size: larger;
+}
+
+.player-list{
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.player-list-item{
+  background: var(--container);
+  border-radius: var(--border-radius);
+  padding: 0;
+  margin: 0.1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.player-list-item span{
+  padding: 1em;
+  color: var(--font-color-darker);
+}
+//border on score screen
+.score-container .player-list-item span{
+  border-right: 1px solid var(--font-color-darker);
+}
+.player-list-item small{
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+  color: var(--font-color-darker);
+}
+
+.form-group-submit{
+  display: flex;
+  justify-content: center;
+}
+.form-group-submit p{
+  color: var(--font-color);
+}
+
+.form-control-submit{
+  cursor: pointer;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  border-radius: var(--border-radius);
+  border: none;
+  color: var(--font-color);
+  background: var(--form-control-submit);
+  padding: 1em;
+  font-size: 1em;
+  transition: 0.2s;
+  outline: none;
+}
+.form-control-submit:hover:enabled{
+  color: var(--font-color);
+  background: var(--form-control-active);
 }
