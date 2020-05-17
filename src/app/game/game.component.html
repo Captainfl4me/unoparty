@@ -23,12 +23,12 @@
         </div>
       </div>
       <div class="card-container">
-        <app-card cardName="card_back" [cardTheme]="cardTheme" (click)="onPickCard()" [fixed]="true" style="position: absolute; left: 0;"></app-card>
+        <app-card cardName="card_back_alt" [cardTheme]="cardTheme" (click)="onPickCard()" [fixed]="true" [cursor]="canPlay&&!hasPickCard" style="position: absolute; left: 2em;"></app-card>
         <app-card [cardName]="currentCard" [cardTheme]="cardTheme" [fixed]="true" [cursor]="false"></app-card>
         <div *ngIf="forcedColor" style="width: 20px; height: 20px;" [style.background]="forcedColor"></div>
       </div>
       <div class="deck-container">
-        <app-card *ngFor="let card of cards; let i = index" [cardName]="card" [cardTheme]="cardTheme" (click)="onPutCard(i, card)" class="card"></app-card>
+        <app-card *ngFor="let card of cards; let i = index" [cardName]="card" [cardTheme]="cardTheme" (click)="onPutCard(i, card)" [style.z-index]="i" class="card" [ngClass]="{cardDisabled: isStackingCard&&currentCard.split('_')[currentCard.split('_').length-1] != card.split('_')[card.split('_').length-1] }"></app-card>
       </div>
     </div>
     <div class="wait-container" *ngSwitchDefault>

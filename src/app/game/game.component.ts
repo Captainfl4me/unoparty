@@ -32,7 +32,9 @@ export class GameComponent implements OnInit, OnDestroy {
   playersList: Array<{name: string, cards: number, score: number}>=[];
   playersSubscription: Subscription;
   playersUpdateSubscription: Subscription;
+
   canPlay: boolean = false;
+  hasPickCard: boolean = false;
 
   isSelectingColor: boolean = false;
   selectedColor: string = "";
@@ -93,7 +95,7 @@ export class GameComponent implements OnInit, OnDestroy {
         this.playersSubscription = this.roomService.playersSubject.subscribe((players)=>{
           this.playersList = players;
         });
-        this.playersSubscription = this.roomService.playerUpdateSubject.subscribe((playersUpdate)=>{
+        this.playersUpdateSubscription = this.roomService.playerUpdateSubject.subscribe((playersUpdate)=>{
           this.playersList[this.playersList.map(function(e) { return e.name; }).indexOf(playersUpdate.name)].cards = playersUpdate.cards;
         });
 
@@ -138,6 +140,7 @@ export class GameComponent implements OnInit, OnDestroy {
                       }
                     }
                   }else{
+                    this.hasPickCard = false;
                     this.canPlay = true;
                   }
               });
@@ -153,12 +156,13 @@ export class GameComponent implements OnInit, OnDestroy {
   }
   //pick a card
   onPickCard(skip: boolean = false){
-    if(this.canPlay || skip){
+    if((this.canPlay&&!this.hasPickCard) || skip){
       this.roomService.pickCard().then(
         (card: string)=>{
           this.cards.push(card);
           this.roomService.playerRef.update({cards: this.cards.length});
           if(!skip){
+            this.hasPickCard = true;
             if(!this.canPlayCard(card)){
               this.canPlay = false;
               this.roomService.updateTurn();
