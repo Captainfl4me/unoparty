@@ -237,7 +237,7 @@ export class GameComponent implements OnInit, OnDestroy {
   putCard(card: string){
     this.gameRef.child("current_card").once("value",
       (dataSnapshot)=>{
-        if(this.forcedColor){
+        if(this.forcedColor && !this.isStackingCard){
           this.forcedColor = null;
           this.gameRef.child("forced_color").remove();
         }
