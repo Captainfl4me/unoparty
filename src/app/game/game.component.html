@@ -43,13 +43,13 @@
 
     <div class="pop-up-container" *ngIf="isSelectingColor">
       <div class="pop-up-panel">
-        <span (click)="isSelectingColor=false">*close*</span>
-        <h4>Choisir la couleur</h4>
+        <span (click)="isSelectingColor=false" style="align-self: flex-end; cursor: pointer;"><i class="gg-close"></i></span>
+        <h4 style="margin-top: 0; user-select: none;">Choisir la couleur</h4>
         <div class="pop-up-list">
-          <button (click)="selectColor('blue')" style="background: var(--blue)">Bleu</button>
-          <button (click)="selectColor('yellow')" style="background: var(--yellow)">Jaune</button>
-          <button (click)="selectColor('green')" style="background: var(--green)">Vert</button>
-          <button (click)="selectColor('red')" style="background: var(--red)">Rouge</button>
+          <button (click)="selectColor('blue')" class="clicker" style="background: var(--blue); width: 3em; height: 3em;"></button>
+          <button (click)="selectColor('yellow')" class="clicker" style="background: var(--yellow); width: 3em; height: 3em;"></button>
+          <button (click)="selectColor('green')" class="clicker" style="background: var(--green); width: 3em; height: 3em;"></button>
+          <button (click)="selectColor('red')" class="clicker" style="background: var(--red); width: 3em; height: 3em;"></button>
         </div>
       </div>
     </div>

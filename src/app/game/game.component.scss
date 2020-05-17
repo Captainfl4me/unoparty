@@ -15,7 +15,6 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: flex-end;
   width: 100%;
   margin-top: 2em;
 }
@@ -103,6 +102,11 @@
   padding: 1em;
   color: var(--font-color);
   border: none;
+}
+
+.clicker{
+  cursor: pointer;
+  border-radius: var(--border-radius);
 }
 /*container score and wait */
 .score-container h4{

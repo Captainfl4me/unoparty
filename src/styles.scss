@@ -29,10 +29,10 @@ html[data-theme='flat-dark']{
   --font-color-darker: #67696D;
   --font-color-danger: #C0392B;
   --title-color: white;
-  --blue: blue;
-  --yellow: yellow;
-  --red: red;
-  --green: green;
+  --blue: #3498DB;
+  --yellow: #FED230;
+  --red: #E74C3C;
+  --green: #1CB559;
   --font: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   --border-radius: 0.6em;
 }
@@ -58,4 +58,32 @@ html[data-theme='flat-light']{
   justify-content: center;
   align-items: center;
   box-shadow: 0px 2px 5px grey;
+}
+
+.gg-close {
+  box-sizing: border-box;
+  position: relative;
+  display: block;
+  transform: scale(var(--ggs,1));
+  width: 22px;
+  height: 22px;
+  border: 2px solid transparent;
+  border-radius: 40px
+}
+.gg-close::after,
+.gg-close::before {
+  content: "";
+  display: block;
+  box-sizing: border-box;
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background: currentColor;
+  transform: rotate(45deg);
+  border-radius: 5px;
+  top: 8px;
+  left: 1px
+}
+.gg-close::after {
+  transform: rotate(-45deg)
 }
