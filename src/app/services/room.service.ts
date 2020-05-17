@@ -19,6 +19,7 @@ export class RoomService implements OnDestroy{
 
   players: Array<{name: string, cards: number, score: number}>=[];
   playersSubject = new Subject<Array<{name: string, cards: number, score: number}>>();
+  playerUpdateSubject = new Subject<{name: string, cards: number, score: number}>();
   playerRef: firebase.database.Reference;
 
   isAdmin: boolean = false;
@@ -108,21 +109,29 @@ export class RoomService implements OnDestroy{
                 //left and join message listener
                 this.roomRef.child("game/players").on("child_added",
                 (dataSnapshot)=>{
-                  const player = { name: dataSnapshot.val().name, cards: parseInt(dataSnapshot.val().cards) };
+                  const player: {name: string, cards: number, score: number} = dataSnapshot.val();
                   if(player.name!=firebase.auth().currentUser.displayName){
                     this.chats.push({name: "", content: player.name+" vient de rejoindre la partie !"});
                     this.chatSubject.next(this.chats);
                   }
+                  this.players.push(player);
                 });
                 this.roomRef.child("game/players").on("child_removed",
                 (dataSnapshot)=>{
-                  const player = { name: dataSnapshot.val().name, cards: parseInt(dataSnapshot.val().cards) };
+                  const player: {name: string, cards: number, score: number} = dataSnapshot.val();
                   if(player.name!=firebase.auth().currentUser.displayName){
                     this.chats.push({name: "", content: player.name+" vient de quitter la partie."});
                     this.chatSubject.next(this.chats);
                   }
+                  this.players.slice(this.players.indexOf(player), 1);
                 });
-                this.roomRef.child("game/players").on("value",
+                this.roomRef.child("game/players").on("child_changed",
+                (dataSnapshot)=>{
+                  const player: {name: string, cards: number, score: number} = dataSnapshot.val();
+                  this.players[this.players.map(function(e) { return e.name; }).indexOf(player.name)].cards = player.cards;
+                  this.playerUpdateSubject.next(player);
+                });
+                this.roomRef.child("game/players").once("value",
                 (playersSnapshot)=>{
                   if(playersSnapshot.val()){
                     const players: Array<{name: string, cards: number, score: number}> = Object.values(playersSnapshot.val());

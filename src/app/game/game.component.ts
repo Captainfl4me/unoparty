@@ -31,6 +31,7 @@ export class GameComponent implements OnInit, OnDestroy {
   currentPlayer: string;
   playersList: Array<{name: string, cards: number, score: number}>=[];
   playersSubscription: Subscription;
+  playersUpdateSubscription: Subscription;
   canPlay: boolean = false;
 
   isSelectingColor: boolean = false;
@@ -91,6 +92,9 @@ export class GameComponent implements OnInit, OnDestroy {
         //update players list
         this.playersSubscription = this.roomService.playersSubject.subscribe((players)=>{
           this.playersList = players;
+        });
+        this.playersSubscription = this.roomService.playerUpdateSubject.subscribe((playersUpdate)=>{
+          this.playersList[this.playersList.map(function(e) { return e.name; }).indexOf(playersUpdate.name)].cards = playersUpdate.cards;
         });
 
         //update current player
@@ -284,6 +288,7 @@ export class GameComponent implements OnInit, OnDestroy {
   ngOnDestroy(){
     if(this.playersSubscription){
       this.playersSubscription.unsubscribe();
+      this.playersUpdateSubscription.unsubscribe();
       this.gameRef.child("current_card").off();
     }
     this.roomService.disconnect();
