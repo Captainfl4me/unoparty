@@ -23,7 +23,8 @@
   <div class="panel-container">
     <h3>Salle public</h3>
     <ul class="list-group">
-      <p>Aucune salle ouverte..</p>
+      <li *ngFor="let room of roomList"><button (click)="connect(room.id)">{{room.name}}</button></li>
+      <p *ngIf="roomList.length==0">Aucune salle ouverte..</p>
     </ul>
   </div>
 

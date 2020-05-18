@@ -55,11 +55,12 @@ export class GameComponent implements OnInit, OnDestroy {
       );
     }
     this.roomId = this.activatedRoute.snapshot.params['id'];
-    this.roomService.connect(this.roomId).then(
+    const conf = this.activatedRoute.snapshot.params['conf'];
+    this.roomService.connect(this.roomId, conf).then(
       (Ref)=>{
         this.gameRef = Ref;
         this.cards=[];
-        this.playersList=[];
+        this.playersList=this.roomService.players;
         this.isAdmin = this.roomService.isAdmin;
         this.playerName=firebase.auth().currentUser.displayName;
         //update currentCard

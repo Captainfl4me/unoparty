@@ -13,7 +13,7 @@ const routes: Routes = [
   {path: 'auth/signup', canActivate: [ConnectGuardService], component: SignupComponent},
   {path: 'auth', redirectTo: '/auth/signin'},
   {path: 'menu', canActivate: [AuthGuardService], component: MenuComponent},
-  {path: 'game/:id', canActivate: [AuthGuardService], component: GameComponent},
+  {path: 'game/:conf/:id', canActivate: [AuthGuardService], component: GameComponent},
   {path: '', redirectTo: '/menu', pathMatch: 'full'},
   {path: '**', redirectTo: '/menu'}
 ];

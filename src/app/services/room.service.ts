@@ -27,10 +27,10 @@ export class RoomService implements OnDestroy{
   constructor(private gameService: GameService, private router: Router) {
   }
 
-  createNewRoom(isPrivate: boolean, name: string){
+  createNewRoom(isPrivate: boolean, name: string, maxPlayers: number){
     return new Promise(
       (resolve, reject)=>{
-        const newRoom = {creator: firebase.auth().currentUser.displayName, name: name};
+        const newRoom = {creator: firebase.auth().currentUser.displayName, name: name, maxPlayers: maxPlayers};
         //push room in database
         firebase.database().ref(isPrivate ? "private_room" : "public_room").push(newRoom).then(
           (ref)=>{
@@ -71,15 +71,17 @@ export class RoomService implements OnDestroy{
       });
   }
 
-  connect(roomId: string){
+  connect(roomId: string, conf: string){
     this.isAdmin = false;
     return new Promise<firebase.database.Reference>(
       (resolve, reject)=>{
         //firebase ref to database
-        this.roomRef = firebase.database().ref("private_room").child(roomId);
+        this.roomRef = firebase.database().ref(conf=="private" ? "private_room" : "public_room").child(roomId);
         //reset chats
         this.chats = [];
         this.chatSubject.next(this.chats);
+        this.players=[];
+        this.playersSubject.next(this.players);
 
         this.roomRef.child("creator").once("value",
         (creator_snapshot)=>{
@@ -100,6 +102,16 @@ export class RoomService implements OnDestroy{
             this.roomRef.child("game/players").push({name: firebase.auth().currentUser.displayName, cards: 0, score: 0}).then(
               (ref)=>{
                 this.playerRef = ref;
+
+                this.roomRef.child("maxPlayers").once("value",
+                  (maxPlayersSnapshot)=>{
+                    this.roomRef.child("game/players").once("value",
+                      (players)=>{
+                        if(Object.values(players.val()).length>maxPlayersSnapshot.val()){
+                          this.disconnect();
+                        }
+                    });
+                });
                 //chats listener and update
                 this.roomRef.child("chats").on("child_added",
                   (datasnapshot)=>{
@@ -115,6 +127,7 @@ export class RoomService implements OnDestroy{
                     this.chatSubject.next(this.chats);
                   }
                   this.players.push(player);
+                  this.playersSubject.next(this.players);
                 });
                 this.roomRef.child("game/players").on("child_removed",
                 (dataSnapshot)=>{
@@ -124,20 +137,13 @@ export class RoomService implements OnDestroy{
                     this.chatSubject.next(this.chats);
                   }
                   this.players.slice(this.players.indexOf(player), 1);
+                  this.playersSubject.next(this.players);
                 });
                 this.roomRef.child("game/players").on("child_changed",
                 (dataSnapshot)=>{
                   const player: {name: string, cards: number, score: number} = dataSnapshot.val();
                   this.players[this.players.map(function(e) { return e.name; }).indexOf(player.name)].cards = player.cards;
                   this.playerUpdateSubject.next(player);
-                });
-                this.roomRef.child("game/players").once("value",
-                (playersSnapshot)=>{
-                  if(playersSnapshot.val()){
-                    const players: Array<{name: string, cards: number, score: number}> = Object.values(playersSnapshot.val());
-                    this.players = players;
-                    this.playersSubject.next(this.players);
-                  }
                 });
                 resolve(this.roomRef.child("game"));
               }
