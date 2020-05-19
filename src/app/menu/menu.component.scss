@@ -98,7 +98,7 @@ a{
   height: auto;
   transition: height 0.5s ease;
 }
-.panel-container button{
+.button-submit{
   cursor: pointer;
   -moz-user-select: none;
   -khtml-user-select: none;
@@ -115,11 +115,11 @@ a{
   transition: 0.2s;
   outline: none;
 }
-.panel-container button:hover:enabled{
+.button-submit:hover:enabled{
   color: var(--font-color);
   background: var(--form-control-active);
 }
-.panel-container button:disabled{
+.button-submit:disabled{
   cursor: default;
   color: var(--font-color-darker);
   background: var(--form-control-background);
@@ -188,10 +188,26 @@ input[type=number]::-webkit-outer-spin-button {
   font-size: 1em;
   width: 18em;
 }
-.form-control-number button{
-  position: absolute;
-  width: 3em;
+.button-number{
+  cursor: pointer;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   text-align: center;
+
+  border-radius: var(--border-radius);
+  border: none;
+  color: var(--font-color);
+  background: transparent;
+  width: 3em;
+  padding: 1em;
+  transition: 0.2s;
+  outline: none;
+}
+.button-number:hover{
+  background: var(--font-color-darker);
 }
 .form-control-number .down{
   left: 0;

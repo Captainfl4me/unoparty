@@ -40,9 +40,7 @@
         <div class="form-group">
           <label for="players">Nombre de joueurs</label>
           <div class="form-control-number">
-            <button type="button" class="down" onclick="this.nextElementSibling.stepDown()">-</button>
             <input type="number" min="2" max="10" step="1" id="players" formControlName="players" >
-            <button type="button" class="up" onclick="this.previousElementSibling.stepUp()">+</button>
           </div>
         </div>
         <div class="form-group-checkbox">
@@ -53,9 +51,9 @@
           </label>
         </div>
       </div>
-      <button type="submit" [disabled]="createRoomForm.invalid">Creer une nouvelle salle</button>
+      <button type="submit" class="button-submit" [disabled]="createRoomForm.invalid">Creer une nouvelle salle</button>
     </form>
-    <button (click)="createRoom = true" *ngIf="!createRoom" id="new-room">Creer une nouvelle salle</button>
+    <button (click)="createRoom = true" class="button-submit" *ngIf="!createRoom" id="new-room">Creer une nouvelle salle</button>
   </div>
   <!--pop up loading panel-->
   <div *ngIf="isCreatingRoom" class="pop-up-container">
