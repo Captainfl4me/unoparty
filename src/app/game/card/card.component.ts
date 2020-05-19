@@ -13,6 +13,7 @@ export class CardComponent implements OnInit {
   @Input() cardTheme: number;
   @Input() cursor: boolean=true;
   @Input() fixed: boolean = false;
+  @Input() cardDisabled: boolean = false;
 
   constructor(private roomService: RoomService) { }
 

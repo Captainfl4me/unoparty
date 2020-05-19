@@ -73,7 +73,7 @@ export class MenuComponent implements OnInit {
   onDeconnect(){
     this.authService.SignOut().then(
       ()=>{
-        this.router.navigate(['/']);
+        this.router.navigate(['/auth']);
       }
     );
   }

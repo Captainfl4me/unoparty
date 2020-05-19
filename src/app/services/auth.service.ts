@@ -3,6 +3,7 @@ import * as firebase from'firebase/app';
 import 'firebase/auth';
 import { Subject } from 'rxjs';
 import { promise } from 'protractor';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class AuthService{
 
   userPreferences: {cards: string, theme: string};
 
-  constructor() {
+  constructor(private router: Router) {
     firebase.auth().onAuthStateChanged(
       (user)=>{
         if(user){
@@ -149,10 +150,11 @@ export class AuthService{
     return new Promise(
       (resolve)=>{
         firebase.auth().signOut().then(
-          ()=>{resolve(true);}
-        );
-      }
-    )
+          ()=>{
+            this.isAuth=false;
+            resolve(true);
+          });
+    });
   }
 
   createCookie(name,value,days) {

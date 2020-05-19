@@ -5,6 +5,12 @@
   padding-top: 10em;
   transition: all 0.2s;
 }
+.cardDisabled{
+  filter: grayscale(100%);
+}
+.cardDisabled:hover{
+  padding-top: 10em;
+}
 .notFixed:hover{
   padding-top: 4em;
   padding-left: 1em;
