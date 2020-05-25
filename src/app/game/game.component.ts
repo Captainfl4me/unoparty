@@ -24,6 +24,7 @@ export class GameComponent implements OnInit, OnDestroy {
   score: number = 0;
 
   cards: Array<string>=[];
+  sortedCards : Array<string>=[];
   cardTheme: string="flat";
   canPickCard: boolean = true;
 
@@ -163,6 +164,7 @@ export class GameComponent implements OnInit, OnDestroy {
       this.roomService.pickCard().then(
         (card: string)=>{
           this.cards.push(card);
+          this.sortedCards = this.sortCards();
           this.roomService.playerRef.update({cards: this.cards.length});
           if(!skip){
             this.hasPickCard = true;
@@ -210,6 +212,7 @@ export class GameComponent implements OnInit, OnDestroy {
       ()=>{
         this.putCard(name);
         this.cards.splice(index, 1);
+        this.sortedCards = this.sortCards();
         this.roomService.playerRef.update({cards: this.cards.length});
         if(this.cards.length==0){
           this.gameRef.child("current_card").remove();
@@ -259,6 +262,7 @@ export class GameComponent implements OnInit, OnDestroy {
         ()=>{
           this.putCard(this.colorCard.name);
           this.cards.splice(this.colorCard.index, 1);
+          this.sortedCards = this.sortCards();
           this.roomService.updateTurn();
         }
       );
@@ -290,6 +294,12 @@ export class GameComponent implements OnInit, OnDestroy {
     this.roomService.InitGame().then(
       ()=>{}
     );
+  }
+
+  sortCards(){
+    const sortCards = this.cards;
+    sortCards.sort();
+    return sortCards;
   }
 
   ngOnDestroy(){

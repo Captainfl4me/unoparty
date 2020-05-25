@@ -136,7 +136,7 @@ export class RoomService implements OnDestroy{
                     this.chats.push({name: "", content: player.name+" vient de quitter la partie."});
                     this.chatSubject.next(this.chats);
                   }
-                  this.players.slice(this.players.map(function(e) { return e.name; }).indexOf(player.name), 1);
+                  this.players.splice(this.players.map(function(e) { return e.name; }).indexOf(player.name), 1);
                   this.playersSubject.next(this.players);
                 });
                 this.roomRef.child("game/players").on("child_changed",

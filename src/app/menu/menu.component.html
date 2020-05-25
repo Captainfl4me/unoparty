@@ -22,9 +22,9 @@
   <!-- principal panel -->
   <div class="panel-container">
     <h3>Salle public</h3>
-    <ul class="list-group" style="list-style-type: none; padding: 0;">
+    <ul class="list-group" style="list-style-type: none; padding: 0; margin-bottom: 0; display: flex; flex-direction: column; align-items: center;">
       <li *ngFor="let room of roomList"><button class="button-submit" (click)="connect(room.id)" style="margin-bottom: 1em;">{{room.name}}</button></li>
-      <p *ngIf="roomList.length==0">Aucune salle ouverte..</p>
+      <p *ngIf="roomList.length==0" style="margin-top: 0;">Aucune salle ouverte..</p>
     </ul>
   </div>
 
