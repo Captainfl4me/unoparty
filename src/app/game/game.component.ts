@@ -93,6 +93,12 @@ export class GameComponent implements OnInit, OnDestroy {
             }
           }
         });
+        //update forced color
+        this.gameRef.child("forced_color").on("value",
+        (forced_color_snapshot)=>{
+          this.forcedColor = forced_color_snapshot.val() ? forced_color_snapshot.val() : null;
+        });
+
         //update players list
         this.playersSubscription = this.roomService.playersSubject.subscribe((players)=>{
           this.playersList = players;
@@ -111,13 +117,6 @@ export class GameComponent implements OnInit, OnDestroy {
             if(this.currentPlayer==firebase.auth().currentUser.displayName){
               this.gameRef.child("action_card").once("value",
                 (action_card_snapshot)=>{
-                  //check if color is forced
-                  this.gameRef.child("forced_color").once("value",
-                  (forced_color_snapshot)=>{
-                    if(forced_color_snapshot.val()){
-                      this.forcedColor = forced_color_snapshot.val();
-                    }
-                  });
                   //check is action_card is defined
                   if(action_card_snapshot.val()){
                     const action_card: string = action_card_snapshot.val();
@@ -244,7 +243,6 @@ export class GameComponent implements OnInit, OnDestroy {
     this.gameRef.child("current_card").once("value",
       (dataSnapshot)=>{
         if(this.forcedColor && !card.includes("wild")){
-          this.forcedColor = null;
           this.gameRef.child("forced_color").remove();
         }
         const oldCard = dataSnapshot.val();
