@@ -16,8 +16,8 @@
       <div class="players-container">
         <!-- display players -->
         <div *ngFor="let player of playersList" class="player-display">
-          <ul *ngIf="player.name!=playerName" class="player-profile" [style.background]="currentPlayer==player.name ? 'var(--form-control-submit)' : 'transparent'">
-            <li class="player-name">{{player.name}}</li>
+          <ul [style.background]="currentPlayer==player.name ? 'var(--form-control-submit)' : 'transparent'">
+            <li class="player-name">{{ player.name!=playerName ? player.name : 'moi' }}</li>
             <li class="player-cards"><img src="assets/icons/player_cards.png" width="40px"><span>{{player.cards}}</span></li>
           </ul>
         </div>
