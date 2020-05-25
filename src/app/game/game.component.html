@@ -27,7 +27,7 @@
         <app-card [cardName]="currentCard" [cardTheme]="cardTheme" [fixed]="true" [cursor]="false" style="padding: 0.5em; border-radius: 0.5em;" [style]="{background: forcedColor ? 'var(--'+forcedColor+')' : 'transparent'}"></app-card>
       </div>
       <div class="deck-container">
-        <app-card *ngFor="let card of sortedCards; let i = index" [cardName]="card" [cardTheme]="cardTheme" (click)="onPutCard(i, card)" [style.z-index]="i" class="card" [cardDisabled]="isStackingCard&&currentCard.split('_')[currentCard.split('_').length-1] != card.split('_')[card.split('_').length-1]"></app-card>
+        <app-card *ngFor="let card of sortedCards; let i = index" [cardName]="card" [cardTheme]="cardTheme" (click)="onPutCard(i, card)" [style.z-index]="i" class="card" [cursor]="currentPlayer==playerName" [cardDisabled]="isStackingCard&&currentCard.split('_')[currentCard.split('_').length-1] != card.split('_')[card.split('_').length-1]"></app-card>
       </div>
     </div>
     <div class="wait-container" *ngSwitchDefault>
