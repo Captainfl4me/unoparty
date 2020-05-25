@@ -97,7 +97,9 @@ export class GameComponent implements OnInit, OnDestroy {
           this.playersList = players;
         });
         this.playersUpdateSubscription = this.roomService.playerUpdateSubject.subscribe((playersUpdate)=>{
-          this.playersList[this.playersList.map(function(e) { return e.name; }).indexOf(playersUpdate.name)].cards = playersUpdate.cards;
+          const playerIndex = this.playersList.map(function(e) { return e.name; }).indexOf(playersUpdate.name);
+          this.playersList[playerIndex].cards = playersUpdate.cards;
+          this.playersList[playerIndex].score = playersUpdate.score;
         });
 
         //update current player
