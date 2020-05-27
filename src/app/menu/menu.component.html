@@ -14,7 +14,7 @@
     </div>
     <div class="dropdown">
       <ul>
-        <li><a>Profile</a></li>
+        <li [routerLink]="['/auth', 'profile']"><a>Profile</a></li>
         <li><a (click)="onDeconnect()">Se déconnecter</a></li>
       </ul>
     </div>

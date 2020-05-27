@@ -6,11 +6,13 @@ import { AuthGuardService } from './services/auth-guard.service';
 import { GameComponent } from './game/game.component';
 import { ConnectGuardService } from './services/connect-guard.service';
 import { MenuComponent } from './menu/menu.component';
+import { ProfileComponent } from './auth/profile/profile.component';
 
 
 const routes: Routes = [
   {path: 'auth/signin', canActivate: [ConnectGuardService], component: SigninComponent},
   {path: 'auth/signup', canActivate: [ConnectGuardService], component: SignupComponent},
+  {path: 'auth/profile', canActivate: [AuthGuardService], component: ProfileComponent},
   {path: 'auth', redirectTo: '/auth/signin'},
   {path: 'menu', canActivate: [AuthGuardService], component: MenuComponent},
   {path: 'game/:conf/:id', canActivate: [AuthGuardService], component: GameComponent},

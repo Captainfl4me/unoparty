@@ -10,6 +10,7 @@ import { SignupComponent } from './auth/signup/signup.component';
 import { MenuComponent } from './menu/menu.component';
 import { ChatComponent } from './game/chat/chat.component';
 import { CardComponent } from './game/card/card.component';
+import { ProfileComponent } from './auth/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { CardComponent } from './game/card/card.component';
     SignupComponent,
     MenuComponent,
     ChatComponent,
-    CardComponent
+    CardComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,
