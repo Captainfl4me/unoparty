@@ -22,6 +22,9 @@ export class RoomService implements OnDestroy{
   playerUpdateSubject = new Subject<{name: string, cards: number, score: number}>();
   playerRef: firebase.database.Reference;
 
+  turn: number;
+  turnSubject = new Subject<number>();
+
   isAdmin: boolean = false;
 
   constructor(private gameService: GameService, private router: Router) {
@@ -118,6 +121,16 @@ export class RoomService implements OnDestroy{
                     this.chats.push(datasnapshot.val());
                     this.chatSubject.next(this.chats);
                 });
+
+                //update turn
+                this.roomRef.child("game/turn").on("value",
+                (turnSnapshot)=>{
+                  const turn = turnSnapshot.val();
+                  if(turn){
+                    this.turn = turn;
+                    this.turnSubject.next(this.turn);
+                  }
+                });
                 //left and join message listener
                 this.roomRef.child("game/players").on("child_added",
                 (dataSnapshot)=>{
@@ -209,17 +222,11 @@ export class RoomService implements OnDestroy{
   //updateTurn
   updateTurn(){
     const currentIndex = this.players.map(function(e) { return e.name; }).indexOf(firebase.auth().currentUser.displayName);
-    this.roomRef.child("game/turn").once("value",
-    (dataSnapshot)=>{
-      let newPlayerIndex: number = (currentIndex+parseInt(dataSnapshot.val()))%this.players.length;
-      if(newPlayerIndex<0){
-        newPlayerIndex=this.players.length-1;
-      }
-      this.roomRef.child("game/current_player").set(this.players[newPlayerIndex].name);
-    },
-    ()=>{
-      this.updateTurn();
-    });
+    let newPlayerIndex: number = (currentIndex+this.turn)%this.players.length;
+    if(newPlayerIndex<0){
+      newPlayerIndex=this.players.length-1;
+    }
+    this.roomRef.child("game/current_player").set(this.players[newPlayerIndex].name);
   }
   //disconnect from room
   disconnect(){

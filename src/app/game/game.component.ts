@@ -33,6 +33,8 @@ export class GameComponent implements OnInit, OnDestroy {
   playersList: Array<{name: string, cards: number, score: number}>=[];
   playersSubscription: Subscription;
   playersUpdateSubscription: Subscription;
+  turn: number = 1;
+  turnSubscription: Subscription;
 
   canPlay: boolean = false;
   hasPickCard: boolean = false;
@@ -108,7 +110,12 @@ export class GameComponent implements OnInit, OnDestroy {
           this.playersList[playerIndex].cards = playersUpdate.cards;
           this.playersList[playerIndex].score = playersUpdate.score;
         });
-
+        //update Turn
+        this.turnSubscription = this.roomService.turnSubject.subscribe(
+          (turn)=>{
+            this.turn = turn;
+        });
+        this.turn = this.roomService.turn;
         //update current player
         this.gameRef.child("current_player").on("value",
           (current_player_snapshot)=>{

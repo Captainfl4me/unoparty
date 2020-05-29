@@ -24,7 +24,9 @@
       </div>
       <div class="card-container">
         <app-card cardName="card_back_alt" [cardTheme]="cardTheme" (click)="onPickCard()" [fixed]="true" [cursor]="canPlay&&!hasPickCard" style="position: absolute; left: 2em;"></app-card>
+        <img src="assets/icons/Turn.png" style="width: 120px" [style.transform]="'scaleY('+turn+')'">
         <app-card [cardName]="currentCard" [cardTheme]="cardTheme" [fixed]="true" [cursor]="false" style="padding: 0.5em; border-radius: 0.5em;" [style]="{background: forcedColor ? 'var(--'+forcedColor+')' : 'transparent'}"></app-card>
+        <img src="assets/icons/Turn.png" style="width: 120px" [style.transform]="'rotate(-180deg) scaleY('+turn+')'">
       </div>
       <div class="deck-container">
         <app-card *ngFor="let card of sortedCards; let i = index" [cardName]="card" [cardTheme]="cardTheme" (click)="onPutCard(i, card)" [style.z-index]="i" class="card" [cursor]="currentPlayer==playerName" [cardDisabled]="isStackingCard&&currentCard.split('_')[currentCard.split('_').length-1] != card.split('_')[card.split('_').length-1]"></app-card>
