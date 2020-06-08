@@ -110,12 +110,14 @@ export class GameComponent implements OnInit, OnDestroy {
           const playerIndex = this.playersList.map(function(e) { return e.name; }).indexOf(playersUpdate.name);
           this.playersList[playerIndex].cards = playersUpdate.cards;
           this.playersList[playerIndex].score = playersUpdate.score;
-          if(this.uno != playersUpdate.uno && this.cards.length==1){
-            for(let i = 0; i< 2; i++){
-              this.onPickCard(true);
+          if(this.playersList[playerIndex].name==this.playerName){
+            if((this.uno != playersUpdate.uno) && this.cards.length==1){
+              for(let i = 0; i< 2; i++){
+                this.onPickCard(true);
+              }
+              this.uno= false;
+              this.roomService.playerRef.update({uno: false});
             }
-            this.uno= false;
-            this.roomService.playerRef.update({uno: false});
           }
         });
         //update Turn
