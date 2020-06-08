@@ -17,9 +17,9 @@ export class RoomService implements OnDestroy{
   chats: any = [];
   chatSubject = new Subject<Array<string>>();
 
-  players: Array<{name: string, cards: number, score: number}>=[];
-  playersSubject = new Subject<Array<{name: string, cards: number, score: number}>>();
-  playerUpdateSubject = new Subject<{name: string, cards: number, score: number}>();
+  players: Array<{name: string, cards: number, score: number, uno: boolean}>=[];
+  playersSubject = new Subject<Array<{name: string, cards: number, score: number, uno: boolean}>>();
+  playerUpdateSubject = new Subject<{name: string, cards: number, score: number, uno: boolean}>();
   playerRef: firebase.database.Reference;
 
   turn: number;
@@ -102,7 +102,7 @@ export class RoomService implements OnDestroy{
               this.isAdmin = true;
             }
             //firebase push new user connection
-            this.roomRef.child("game/players").push({name: firebase.auth().currentUser.displayName, cards: 0, score: 0}).then(
+            this.roomRef.child("game/players").push({name: firebase.auth().currentUser.displayName, cards: 0, score: 0, uno: false}).then(
               (ref)=>{
                 this.playerRef = ref;
 
@@ -134,7 +134,7 @@ export class RoomService implements OnDestroy{
                 //left and join message listener
                 this.roomRef.child("game/players").on("child_added",
                 (dataSnapshot)=>{
-                  const player: {name: string, cards: number, score: number} = dataSnapshot.val();
+                  const player: {name: string, cards: number, score: number, uno: boolean} = dataSnapshot.val();
                   if(player.name!=firebase.auth().currentUser.displayName){
                     this.chats.push({name: "", content: player.name+" vient de rejoindre la partie !"});
                     this.chatSubject.next(this.chats);
@@ -144,7 +144,7 @@ export class RoomService implements OnDestroy{
                 });
                 this.roomRef.child("game/players").on("child_removed",
                 (dataSnapshot)=>{
-                  const player: {name: string, cards: number, score: number} = dataSnapshot.val();
+                  const player: {name: string, cards: number, score: number, uno: boolean} = dataSnapshot.val();
                   if(player.name!=firebase.auth().currentUser.displayName){
                     this.chats.push({name: "", content: player.name+" vient de quitter la partie."});
                     this.chatSubject.next(this.chats);
@@ -154,8 +154,10 @@ export class RoomService implements OnDestroy{
                 });
                 this.roomRef.child("game/players").on("child_changed",
                 (dataSnapshot)=>{
-                  const player: {name: string, cards: number, score: number} = dataSnapshot.val();
-                  this.players[this.players.map(function(e) { return e.name; }).indexOf(player.name)].cards = player.cards;
+                  const player: {name: string, cards: number, score: number, uno: boolean} = dataSnapshot.val();
+                  const index = this.players.map(function(e) { return e.name; }).indexOf(player.name);
+                  this.players[index].cards = player.cards;
+                  this.players[index].uno = player.uno;
                   this.playerUpdateSubject.next(player);
                 });
                 resolve(this.roomRef.child("game"));

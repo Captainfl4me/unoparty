@@ -18,6 +18,7 @@ export class GameComponent implements OnInit, OnDestroy {
   roomName: string = "";
   playerName: string;
   gameRef: firebase.database.Reference;
+  uno: boolean = false;
 
   inGame: boolean;
   isAdmin = false;
@@ -109,6 +110,13 @@ export class GameComponent implements OnInit, OnDestroy {
           const playerIndex = this.playersList.map(function(e) { return e.name; }).indexOf(playersUpdate.name);
           this.playersList[playerIndex].cards = playersUpdate.cards;
           this.playersList[playerIndex].score = playersUpdate.score;
+          if(this.uno != playersUpdate.uno && this.cards.length==1){
+            for(let i = 0; i< 2; i++){
+              this.onPickCard(true);
+            }
+            this.uno= false;
+            this.roomService.playerRef.update({uno: false});
+          }
         });
         //update Turn
         this.turnSubscription = this.roomService.turnSubject.subscribe(
@@ -116,6 +124,8 @@ export class GameComponent implements OnInit, OnDestroy {
             this.turn = turn;
         });
         this.turn = this.roomService.turn;
+        //check
+
         //update current player
         this.gameRef.child("current_player").on("value",
           (current_player_snapshot)=>{
@@ -170,6 +180,8 @@ export class GameComponent implements OnInit, OnDestroy {
       this.roomService.pickCard().then(
         (card: string)=>{
           this.cards.push(card);
+          this.uno = false;
+          this.roomService.playerRef.update({uno: false});
           this.sortedCards = this.sortCards();
           this.roomService.playerRef.update({cards: this.cards.length});
           if(!skip){
@@ -305,6 +317,31 @@ export class GameComponent implements OnInit, OnDestroy {
     const sortCards = this.cards;
     sortCards.sort();
     return sortCards;
+  }
+
+  sayUno(){
+    if(this.cards.length == 1){
+      this.uno = true;
+      this.roomService.playerRef.update({uno: true});
+      this.roomService.newChat("uno !");
+    }
+  }
+  blockUno(){
+    return new Promise(
+      (resolve, reject)=>{
+        this.gameRef.child("players").once("value",
+        (playersSnapshot)=>{
+          const players = playersSnapshot.val();
+          if(players){
+            let playersArray = Object.entries(players);
+            playersArray.forEach((playerArray: [string, {name: string, cards: number, score: number, uno: boolean}])=>{
+              if(!playerArray[1].uno && playerArray[1].cards==1){
+                this.gameRef.child("players/"+playerArray[0]).update({uno: true});
+              }
+            });
+          }
+        });
+    });
   }
 
   ngOnDestroy(){
