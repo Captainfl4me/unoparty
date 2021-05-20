@@ -3,7 +3,7 @@ import { RoomService } from '../services/room.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/database';
 
 @Component({
@@ -13,30 +13,31 @@ import 'firebase/database';
 })
 export class MenuComponent implements OnInit {
 
-  createRoom: boolean=false;
+  createRoom = false;
   createRoomForm: FormGroup;
-  isCreatingRoom: boolean=false;
+  isCreatingRoom = false;
 
   picture: string;
   username: string;
 
-  roomList: Array<{name: string, id: string}>=[];
+  roomList: Array<{name: string, id: string}> = [];
 
-  constructor(private formBuilder: FormBuilder, private router: Router, private authService: AuthService, private roomService: RoomService) { }
+  constructor(private formBuilder: FormBuilder, private router: Router,
+              private authService: AuthService, private roomService: RoomService) { }
 
   ngOnInit(): void {
     this.username = this.authService.username;
     this.picture = this.authService.picture;
     this.initForm();
-    firebase.database().ref("public_room").on("child_added",
-    (roomSnapshot)=>{
+    firebase.database().ref('public_room').on('child_added',
+    (roomSnapshot) => {
       const room = roomSnapshot.val();
       this.roomList.push({name: room.name, id: roomSnapshot.key});
     });
-    firebase.database().ref("public_room").on("child_removed",
-    (roomSnapshot)=>{
+    firebase.database().ref('public_room').on('child_removed',
+    (roomSnapshot) => {
       const room = roomSnapshot.val();
-      this.roomList.splice(this.roomList.map(function(e) { return e.id; }).indexOf(room.id), 1);
+      this.roomList.splice(this.roomList.map(e => e.id).indexOf(room.id), 1);
     });
   }
   initForm(){
@@ -50,29 +51,29 @@ export class MenuComponent implements OnInit {
     this.router.navigate(['game', 'public', id]);
   }
   onCreateRoom(){
-    if(this.createRoom){
+    if (this.createRoom){
       const value = this.createRoomForm.value;
-      this.isCreatingRoom=true;
-      this.roomService.createNewRoom(value.isPrivate, value.name, value.players).then(
-        (roomId)=>{
+      this.isCreatingRoom = true;
+      this.roomService.createNewRoom(value.isPrivate, value.name, value.players, {rule0: false, rule7: false, ruleSheep: true}).then(
+        (roomId) => {
           this.createRoom = false;
-          this.isCreatingRoom=false;
-          if(value.isPrivate){
+          this.isCreatingRoom = false;
+          if (value.isPrivate){
             this.router.navigate(['game', 'private' , roomId]);
           }else{
             this.router.navigate(['game', 'public', roomId]);
           }
         },
-        (error)=>{
+        (error) => {
           console.log(error);
         }
       );
     }
   }
 
-  onDeconnect(){
+  onDisconnect(){
     this.authService.SignOut().then(
-      ()=>{
+      () => {
         this.router.navigate(['/auth']);
       }
     );

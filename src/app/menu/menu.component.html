@@ -15,7 +15,7 @@
     <div class="dropdown">
       <ul>
         <li [routerLink]="['/auth', 'profile']"><a>Profile</a></li>
-        <li><a (click)="onDeconnect()">Se déconnecter</a></li>
+        <li><a (click)="onDisconnect()">Se déconnecter</a></li>
       </ul>
     </div>
   </div>
@@ -50,6 +50,7 @@
             <span class="slider round"></span>
           </label>
         </div>
+        <!-- custom rules selector -->
       </div>
       <button type="submit" class="button-submit" [disabled]="createRoomForm.invalid">Creer une nouvelle salle</button>
     </form>

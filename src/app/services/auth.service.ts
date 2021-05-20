@@ -1,5 +1,5 @@
 import { Injectable, OnInit } from '@angular/core';
-import * as firebase from'firebase/app';
+import firebase from'firebase/app';
 import 'firebase/auth';
 import { Subject } from 'rxjs';
 import { promise } from 'protractor';
@@ -19,7 +19,7 @@ export class AuthService{
 
   userPreferences: {cards: string, theme: string};
 
-  constructor(private router: Router) {
+  constructor() {
     firebase.auth().onAuthStateChanged(
       (user)=>{
         if(user){
@@ -157,7 +157,7 @@ export class AuthService{
     });
   }
 
-  createCookie(name,value,days) {
+  createCookie(name, value, days) {
     if (days) {
       var date = new Date();
       date.setTime(date.getTime()+(days*24*60*60*1000));
@@ -175,14 +175,14 @@ export class AuthService{
             if(this.userPreferences){
               this.createCookie("theme", this.userPreferences.theme, 50000);
               document.getElementsByTagName("html")[0].setAttribute("data-theme", this.userPreferences.theme);
-              resolve();
+              resolve(true);
             }else{
               firebase.database().ref("users/"+firebase.auth().currentUser.uid).set({cards: 'flat', theme: 'flat-dark'}).then(
                 (value)=>{
                   this.userPreferences=value;
                   this.createCookie("theme", this.userPreferences.theme, 50000);
                   document.getElementsByTagName("html")[0].setAttribute("data-theme", this.userPreferences.theme);
-                  resolve();
+                  resolve(true);
                 },(error)=>{ reject(error); }
               );
             }
