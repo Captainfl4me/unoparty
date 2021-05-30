@@ -1,13 +1,18 @@
 <div class="container">
-  <a routerLink="/" style="align-self: flex-start; margin-left: 1em;">Revenir au menu</a>
+  <a routerLink="/" class="link">Revenir au menu</a>
   <div class="panel-container">
-    <form [formGroup]="changeDisplayName" (ngSubmit)="onChangeDisplayName()">
+    <form [formGroup]="ParamsForm" (ngSubmit)="onChangeDisplayName()">
       <h2>Profile</h2>
       <div class="form-group">
         <label for="displayName">Pseudo</label>
         <input type="text" id="displayName" formControlName="displayName" class="form-control" autocomplete="off">
+
+          <select formControlName="themeSlt" class="form-control">
+            <option value="flat-dark">Thème sombre</option>
+            <option value="flat-light">Thème clair</option>
+          </select>
       </div>
-      <button type="submit" class="button-submit" [disabled]="changeDisplayName.invalid">Changer de pseudo</button>
+      <button type="submit" class="button-submit" [disabled]="ParamsForm.invalid">Sauvegarder les modifications</button>
     </form>
   </div>
 </div>

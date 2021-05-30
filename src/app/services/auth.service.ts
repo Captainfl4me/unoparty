@@ -4,6 +4,7 @@ import 'firebase/auth';
 import { Subject } from 'rxjs';
 import { promise } from 'protractor';
 import { Router } from '@angular/router';
+import { resolve } from 'path/posix';
 
 @Injectable({
   providedIn: 'root'
@@ -166,6 +167,9 @@ export class AuthService{
     else var expires = "";
     document.cookie = name+"="+value+expires+"; path=/";
   }
+
+  //get user info
+  //update user info and set cookies
   getUserPreferences(){
     return new Promise(
       (resolve, reject)=>{
@@ -189,6 +193,22 @@ export class AuthService{
         },(error)=>{ reject(error); });
       }
     )
+  }
+
+  //update user info
+  setUsername(newName: string){
+    return new Promise(
+      (resolve, reject)=>{
+        firebase.auth().currentUser.updateProfile({ displayName: newName }).then(()=>{ resolve(true);}, ()=>{ reject(); });
+    });
+  }
+  setUserPreferences(cards: string, theme: string){
+    return new Promise(
+      (resolve, reject)=>{
+        this.userPreferences.cards = cards;
+        this.userPreferences.theme = theme;
+        firebase.database().ref("users/"+firebase.auth().currentUser.uid).update(this.userPreferences).then(()=>{resolve(true);}, ()=>{ reject();});
+      });
   }
 
 }

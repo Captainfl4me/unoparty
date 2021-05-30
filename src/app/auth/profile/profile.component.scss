@@ -63,3 +63,10 @@ form{
   color: var(--font-color-darker);
   background: var(--form-control-background);
 }
+
+.link{
+  align-self: flex-start; 
+  margin-left: 1em;
+  color: var(--form-control-submit);
+  cursor: pointer;
+}
